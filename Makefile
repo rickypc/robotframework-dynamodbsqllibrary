@@ -1,5 +1,22 @@
+#    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
+#    Copyright (C) 2014  Richard Huang <rickypc@users.noreply.github.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 DYNAMO_NAME = DynamoDBLocal
 DYNAMO_URL = http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz
+LIBRARY_NAME = DynamoDBSQLLibrary
 
 CURL = $(shell which curl 2>/dev/null)
 JAVA = $(shell which java 2>/dev/null)
@@ -7,7 +24,16 @@ JAVA = $(shell which java 2>/dev/null)
 .PHONY: help
 
 help:
-	@echo targets: download, run
+	@echo targets: clean, version, download, run
+
+clean:
+	python setup.py clean --all
+	rm -rf src/*.egg-info
+	find . -iname "*.pyc" -delete
+	find . -iname "__pycache__" | xargs rm -rf {} \;
+
+version:
+	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
 
 download:
 ifeq ($(CURL),)
