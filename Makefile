@@ -31,6 +31,7 @@ clean:
 	rm -rf src/*.egg-info
 	find . -iname "*.pyc" -delete
 	find . -iname "__pycache__" | xargs rm -rf {} \;
+	rm -rf test/test-results
 
 version:
 	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
