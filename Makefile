@@ -24,7 +24,7 @@ JAVA = $(shell which java 2>/dev/null)
 .PHONY: help
 
 help:
-	@echo targets: clean, version, download, run
+	@echo targets: clean, version, download, run, pep8, pylint
 
 clean:
 	python setup.py clean --all
@@ -56,3 +56,9 @@ else
 	./bin/$(DYNAMO_NAME).jar -delayTransientStatuses -inMemory \
 	2>/dev/null & echo $$! > $@;
 endif
+
+pep8:
+	pep8 --config=.pep8rc src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
+
+pylint:
+	pylint --rcfile=.pylintrc src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
