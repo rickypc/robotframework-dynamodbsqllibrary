@@ -21,8 +21,10 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
+from DynamoDBSQLLibrary.keywords.query import Query
 from DynamoDBSQLLibrary.keywords.session import SessionManager
 
 __all__ = [
+    'Query',
     'SessionManager'
 ]
