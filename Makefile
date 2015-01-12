@@ -1,5 +1,5 @@
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -24,7 +24,7 @@ JAVA = $(shell which java 2>/dev/null)
 .PHONY: help
 
 help:
-	@echo targets: clean, version, download, run, pep8, pylint
+	@echo targets: clean, version, download, run, test, pep8, pylint
 
 clean:
 	python setup.py clean --all
@@ -56,6 +56,10 @@ else
 	./bin/$(DYNAMO_NAME).jar -delayTransientStatuses -inMemory \
 	2>/dev/null & echo $$! > $@;
 endif
+
+test:run
+	./test/run
+	kill `cat $<` && rm $<
 
 pep8:
 	pep8 --config=.pep8rc src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
