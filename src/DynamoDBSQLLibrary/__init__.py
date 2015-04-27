@@ -21,13 +21,13 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
-from DynamoDBSQLLibrary.keywords import Query, SessionManager
+from DynamoDBSQLLibrary.keywords import Assertion, Query, SessionManager
 from DynamoDBSQLLibrary.version import get_version
 
 __version__ = get_version()
 
 
-class DynamoDBSQLLibrary(Query, SessionManager):
+class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     # pylint: disable=line-too-long
     """DynamoDBSQLibrary is a testing library for Robot Framework
     that gives you the capability to execute scan and query operations against
@@ -49,6 +49,9 @@ class DynamoDBSQLLibrary(Query, SessionManager):
     | `Query DynamoDB` | oregon     | CREATE TABLE mine (id STRING HASH KEY)     |
     | `Query DynamoDB` | singapore  | CREATE TABLE mine (id STRING HASH KEY)     |
     | `Query DynamoDB` | frankfurt  | CREATE TABLE mine (id STRING HASH KEY)     |
+    | `DynamoDB Table Should Exist` | oregon     | mine                          |
+    | `DynamoDB Table Should Exist` | singapore  | mine                          |
+    | `DynamoDB Table Should Exist` | frankfurt  | mine                          |
     | `Query DynamoDB` | oregon     | INSERT INTO mine (id) VALUES ('oregon')    |
     | `Query DynamoDB` | singapore  | INSERT INTO mine (id) VALUES ('singapore') |
     | `Query DynamoDB` | frankfurt  | INSERT INTO mine (id) VALUES ('frankfurt') |

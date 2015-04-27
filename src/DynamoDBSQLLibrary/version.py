@@ -21,7 +21,7 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 
 
 def get_version():
