@@ -49,6 +49,12 @@ Example
 +-----------------------------+----------------+----------------+-------------------+-----------------+
 | @{frankfurt} =              | Query DynamoDB | frankfurt      | SCAN mine                           |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
+| List And JSON String Should Be Equal         | ${oregon}      | [{"id":"oregon"}]                   |
++-----------------------------+----------------+----------------+-------------------+-----------------+
+| List And JSON String Should Be Equal         | ${singapore}   | [{"id":"singapore"}]                |
++-----------------------------+----------------+----------------+-------------------+-----------------+
+| List And JSON String Should Be Equal         | ${frankfurt}   | [{"id":"frankfurt"}]                |
++-----------------------------+----------------+----------------+-------------------+-----------------+
 | Delete All Dynamodb Sessions                                                                        |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
 
@@ -177,7 +183,7 @@ Run Tests
 License
 -------
 
-Copyright (c) 2014 Richard Huang.
+Copyright (c) 2014 - 2015 Richard Huang.
 
 This library is free software, licensed under: `GNU Affero General Public License (AGPL-3.0) <http://www.gnu.org/licenses/agpl-3.0.en.html>`_.
 

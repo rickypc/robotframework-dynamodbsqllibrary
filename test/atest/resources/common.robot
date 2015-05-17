@@ -18,9 +18,24 @@
 Library  ${CURDIR}${/}..${/}..${/}..${/}src${/}DynamoDBSQLLibrary
 
 *** Keywords ***
+Return Value Should Be
+    [Arguments]  ${commands}  ${message}  ${filter}  ${expected}
+    ...  ${name}=foobar  ${label}=local  ${key}=id
+    ${response} =  Query DynamoDB  ${label}  ${commands}
+    Should Be Equal  ${response}  ${message}
+    @{actual} =  Query DynamoDB  ${label}
+    ...  SELECT * FROM ${name} WHERE ${key}='${filter}'
+    List And JSON String Should Be Equal  ${actual}  ${expected}
+
 Suite Cleanup
     [Documentation]  Remove all DynamoDB sessions
     Delete All DynamoDB Sessions
+
+Suite Cleanup With Default Table
+    [Arguments]  ${name}=foobar  ${label}=local
+    [Documentation]  Delete default table and all DynamoDB sessions
+    Query DynamoDB  ${label}  DROP TABLE IF EXISTS ${name}
+    Suite Cleanup
 
 Suite Prepare
     [Arguments]  ${label}=local  ${host}=127.0.0.1  ${port}=8000  ${secure}=${false}
@@ -29,3 +44,9 @@ Suite Prepare
     ${port_number} =  Convert To Integer  ${port}
     Create DynamoDB Session  ${REGION}  host=${host}  port=${port_number}
     ...  access_key=key  secret_key=secret  is_secure=${is_secure}  label=${label}
+
+Suite Prepare With Default Table
+    [Arguments]  ${name}=foobar  ${label}=local  ${host}=127.0.0.1  ${port}=8000  ${secure}=${false}
+    [Documentation]  Create DynamoDB session and create default table in it
+    Suite Prepare  ${label}  ${host}  ${port}  ${secure}
+    Query DynamoDB  ${label}  CREATE TABLE ${name} (id STRING HASH KEY)

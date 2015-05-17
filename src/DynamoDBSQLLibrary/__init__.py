@@ -46,18 +46,21 @@ class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     | `Create DynamoDB Session` | us-west-2      | access_key=key | secret_key=secret | label=oregon    |
     | `Create DynamoDB Session` | ap-southeast-1 | access_key=key | secret_key=secret | label=singapore |
     | `Create DynamoDB Session` | eu-central-1   | access_key=key | secret_key=secret | label=frankfurt |
-    | `Query DynamoDB` | oregon     | CREATE TABLE mine (id STRING HASH KEY)     |
-    | `Query DynamoDB` | singapore  | CREATE TABLE mine (id STRING HASH KEY)     |
-    | `Query DynamoDB` | frankfurt  | CREATE TABLE mine (id STRING HASH KEY)     |
-    | `DynamoDB Table Should Exist` | oregon     | mine                          |
-    | `DynamoDB Table Should Exist` | singapore  | mine                          |
-    | `DynamoDB Table Should Exist` | frankfurt  | mine                          |
-    | `Query DynamoDB` | oregon     | INSERT INTO mine (id) VALUES ('oregon')    |
-    | `Query DynamoDB` | singapore  | INSERT INTO mine (id) VALUES ('singapore') |
-    | `Query DynamoDB` | frankfurt  | INSERT INTO mine (id) VALUES ('frankfurt') |
-    | @{oregon} =      | `Query DynamoDB`    | oregon       | SCAN mine          |
-    | @{singapore} =   | `Query DynamoDB`    | singapore    | SCAN mine          |
-    | @{frankfurt} =   | `Query DynamoDB`    | frankfurt    | SCAN mine          |
+    | `Query DynamoDB` | oregon     | CREATE TABLE mine (id STRING HASH KEY)       |
+    | `Query DynamoDB` | singapore  | CREATE TABLE mine (id STRING HASH KEY)       |
+    | `Query DynamoDB` | frankfurt  | CREATE TABLE mine (id STRING HASH KEY)       |
+    | `DynamoDB Table Should Exist` | oregon     | mine                            |
+    | `DynamoDB Table Should Exist` | singapore  | mine                            |
+    | `DynamoDB Table Should Exist` | frankfurt  | mine                            |
+    | `Query DynamoDB` | oregon     | INSERT INTO mine (id) VALUES ('oregon')      |
+    | `Query DynamoDB` | singapore  | INSERT INTO mine (id) VALUES ('singapore')   |
+    | `Query DynamoDB` | frankfurt  | INSERT INTO mine (id) VALUES ('frankfurt')   |
+    | @{oregon} =      | `Query DynamoDB`    | oregon       | SCAN mine            |
+    | @{singapore} =   | `Query DynamoDB`    | singapore    | SCAN mine            |
+    | @{frankfurt} =   | `Query DynamoDB`    | frankfurt    | SCAN mine            |
+    | `List And JSON String Should Be Equal` | ${oregon}    | [{"id":"oregon"}]    |
+    | `List And JSON String Should Be Equal` | ${singapore} | [{"id":"singapore"}] |
+    | `List And JSON String Should Be Equal` | ${frankfurt} | [{"id":"frankfurt"}] |
     | `Delete All Dynamodb Sessions` |
     """
     # pylint: disable=line-too-long
