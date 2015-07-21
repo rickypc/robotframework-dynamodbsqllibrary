@@ -36,7 +36,7 @@ with codecs.open(join(CWD, 'README.rst'), encoding='utf-8') as reader:
 
 setup(
     name='robotframework-%s' % LIBRARY_NAME.lower(),
-    version=VERSION,  # pylint: disable=undefined-variable
+    version=VERSION,  # pylint: disable=undefined-variable  # noqa
     description='An Amazon DynamoDB testing library for Robot Framework with SQL-like DSL',
     long_description=LONG_DESCRIPTION,
     url='https://github.com/rickypc/robotframework-%s' % LIBRARY_NAME.lower(),

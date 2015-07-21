@@ -32,8 +32,8 @@ class SessionManager(object):
 
     def __init__(self):
         self._builtin = BuiltIn()
-        self._string = String()
         self._cache = ConnectionCache('No sessions.')
+        self._string = String()
 
     def create_dynamodb_session(self, *args, **kwargs):
         # pylint: disable=line-too-long

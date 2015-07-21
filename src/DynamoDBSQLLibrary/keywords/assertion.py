@@ -45,8 +45,8 @@ class Assertion(object):
         :param str `dump2`: Second table schema dump to be validated.
 
         Examples:
-        | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump2 (bar NUMBER RANGE KEY,id STRING HASH KEY) | # PASS |
-        | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump2 (id STRING HASH KEY)                          | # FAIL |
+        | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump1 (bar NUMBER RANGE KEY,id STRING HASH KEY) | # PASS |
+        | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump1 (id STRING HASH KEY)                          | # FAIL |
         """
         # pylint: disable=line-too-long
         dumps1 = sorted([i.strip() for i in split("[(),]", dump1) if i])

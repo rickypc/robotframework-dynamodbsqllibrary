@@ -25,14 +25,13 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 .PHONY: help test
 
 help:
-	@echo targets: clean, version, download, run, test, pep8, pylint, doc, github_doc, testpypi, pypi
+	@echo targets: clean, version, download, run, lint, test, doc, github_doc, testpypi, pypi
 
 clean:
 	python setup.py clean --all
-	rm -rf src/*.egg-info
+	rm -rf .coverage htmlcov src/*.egg-info test/test-results
 	find . -iname "*.pyc" -delete
 	find . -iname "__pycache__" | xargs rm -rf {} \;
-	rm -rf test/test-results
 
 version:
 	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
@@ -58,15 +57,15 @@ else
 	2>/dev/null & echo $$! > $@;
 endif
 
+lint:clean
+	flake8 --max-complexity 10
+	pylint --rcfile=setup.cfg src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
+
 test:run
+	coverage run --source=src -m unittest discover test/utest
+	coverage report
 	./test/run
 	kill `cat $<` && rm $<
-
-pep8:
-	pep8 --config=.pep8rc src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
-
-pylint:
-	pylint --rcfile=.pylintrc src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
 
 doc:clean
 	python -m robot.libdoc src/$(LIBRARY_NAME) doc/$(LIBRARY_NAME).html
