@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *** Settings ***
-Resource        atest/resources/common.robot
+Resource        test/atest/resources/common.robot
 Suite Setup     Suite Prepare
 Suite Teardown  Suite Cleanup
 

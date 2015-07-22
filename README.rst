@@ -173,8 +173,8 @@ The `Keyword Documentation`_ can be found online, if you need to generate the ke
 
     make documentation
 
-Run Tests
----------
+Run Unit and Acceptance Tests
+-----------------------------
 
 .. code:: bash
 

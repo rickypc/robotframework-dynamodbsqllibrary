@@ -1,5 +1,5 @@
 *** Settings ***
-Resource        atest/resources/common.robot
+Resource        test/atest/resources/common.robot
 Suite Setup     Suite Prepare
 Suite Teardown  Suite Cleanup
 

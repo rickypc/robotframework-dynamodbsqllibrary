@@ -64,7 +64,7 @@ lint:clean
 test:run
 	coverage run --source=src -m unittest discover test/utest
 	coverage report
-	./test/run
+	pybot -d test/test-results test/atest/suites/
 	kill `cat $<` && rm $<
 
 doc:clean
