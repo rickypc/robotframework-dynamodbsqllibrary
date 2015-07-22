@@ -35,6 +35,8 @@ class SessionManagerTests(unittest.TestCase):
 
     def setUp(self):
         """Instantiate the session manager class."""
+        self.label = 'MY-LABEL'
+        self.region = 'MY-REGION'
         self.session = SessionManager()
 
     def test_class_should_initiate(self):
@@ -45,17 +47,17 @@ class SessionManagerTests(unittest.TestCase):
 
     def test_create_should_register_new_session(self):
         """Create session should successfully register new session."""
-        self.session.create_dynamodb_session('region', label='MY-LABEL')
+        self.session.create_dynamodb_session(self.region, label=self.label)
         try:
-            self.session._cache.switch('MY-LABEL')
+            self.session._cache.switch(self.label)
         except RuntimeError:
-            self.fail("Label 'MY-LABEL' should be exist.")
+            self.fail("Label '%s' should be exist." % self.label)
+        self.session.delete_all_dynamodb_sessions()
 
     def test_delete_should_remove_all_sessions(self):
         """Delete session should successfully remove all existing sessions."""
-        self.session.create_dynamodb_session('region', label='MY-LABEL')
+        self.session.create_dynamodb_session(self.region, label=self.label)
         self.session.delete_all_dynamodb_sessions()
         with self.assertRaises(RuntimeError) as context:
-            self.session._cache.switch('MY-LABEL')
-        self.assertTrue("RuntimeError: Non-existing index or alias 'MY-LABEL'."
-                        in context.exception)
+            self.session._cache.switch(self.label)
+        self.assertTrue("Non-existing index or alias '%s'." % self.label in context.exception)
