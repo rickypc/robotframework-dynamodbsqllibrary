@@ -50,7 +50,8 @@ setup(
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Programming Language :: Python :: 2.7',
     ],
-    keywords='robot framework testing automation amazon dynamodb dynamo db sql dsl aws',
+    keywords='robot framework testing automation bigdata amazon dynamodb dynamo '
+             'db nosql sql dsl json aws softwaretesting',
     platforms='any',
     packages=find_packages('src'),
     package_dir={'': 'src'},
