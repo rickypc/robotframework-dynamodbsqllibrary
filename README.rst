@@ -182,8 +182,8 @@ The `Keyword Documentation`_ can be found online, if you need to generate the ke
 
     make doc
 
-Run Unit and Acceptance Tests
------------------------------
+Run Unit Tests, Acceptance Tests, and Test Coverage Report
+----------------------------------------------------------
 
 .. code:: bash
 
