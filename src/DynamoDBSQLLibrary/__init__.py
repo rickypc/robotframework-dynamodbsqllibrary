@@ -29,9 +29,9 @@ __version__ = get_version()
 
 class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     # pylint: disable=line-too-long
-    """DynamoDBSQLibrary is a testing library for Robot Framework
+    """DynamoDBSQLibrary is a big data testing library for Robot Framework
     that gives you the capability to execute scan and query operations against
-    multi-region Amazon DynamoDB sessions simultaneously using a SQL-like DSL.
+    multi Amazon DynamoDB sessions simultaneously using a SQL-like DSL.
 
     See https://aws.amazon.com/dynamodb/ for more information on Amazon DynamoDB.
 

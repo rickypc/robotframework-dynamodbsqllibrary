@@ -1,12 +1,12 @@
-Amazon DynamoDB library for Robot Framework
-===========================================
+Amazon AWS DynamoDB testing library for Robot Framework
+=======================================================
 
 Introduction
 ------------
 
 DynamoDBSQLibrary is a big data testing library for `Robot Framework`_
 that gives you the capability to execute scan and query operations against
-multi-region `Amazon DynamoDB`_ sessions simultaneously using a `SQL-like`_ DSL_.
+multi `Amazon DynamoDB`_ sessions simultaneously using a `SQL-like`_ DSL_.
 
 It leverages DynamoDB Query Languange (DQL_) internally to provide a `SQL-like`_ DSL_
 for `Amazon DynamoDB`_.
@@ -161,7 +161,7 @@ test/
      Test files
 
      atest/
-           Robot Framework acceptance test
+           `Robot Framework`_ acceptance test
 
      utest/
            Python unit test
@@ -180,7 +180,7 @@ The `Keyword Documentation`_ can be found online, if you need to generate the ke
 
 .. code:: bash
 
-    make documentation
+    make doc
 
 Run Unit and Acceptance Tests
 -----------------------------

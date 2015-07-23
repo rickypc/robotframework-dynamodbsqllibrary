@@ -37,7 +37,7 @@ with codecs.open(join(CWD, 'README.rst'), encoding='utf-8') as reader:
 setup(
     name='robotframework-%s' % LIBRARY_NAME.lower(),
     version=VERSION,  # pylint: disable=undefined-variable  # noqa
-    description='An Amazon DynamoDB testing library for Robot Framework with SQL-like DSL',
+    description='An Amazon AWS DynamoDB testing library for Robot Framework with SQL-like DSL',
     long_description=LONG_DESCRIPTION,
     url='https://github.com/rickypc/robotframework-%s' % LIBRARY_NAME.lower(),
     author='Richard Huang',
@@ -51,7 +51,7 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     keywords='robot framework testing automation bigdata amazon dynamodb dynamo '
-             'db nosql sql dsl json aws softwaretesting',
+             'db nosql sql dsl json aws big data softwaretesting',
     platforms='any',
     packages=find_packages('src'),
     package_dir={'': 'src'},
