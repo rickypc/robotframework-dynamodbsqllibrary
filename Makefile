@@ -25,13 +25,16 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 .PHONY: help test
 
 help:
-	@echo targets: clean, version, download, run, lint, test, doc, github_doc, testpypi, pypi
+	@echo targets: clean, clean_dist, version, download, run, lint, test, doc, github_doc, testpypi, pypi
 
 clean:
 	python setup.py clean --all
 	rm -rf .coverage htmlcov src/*.egg-info test/test-results
 	find . -iname "*.pyc" -delete
 	find . -iname "__pycache__" | xargs rm -rf {} \;
+
+clean_dist:
+	rm -rf dist
 
 version:
 	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
@@ -62,7 +65,7 @@ lint:clean
 	pylint --rcfile=setup.cfg src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
 
 test:run
-	coverage run --source=src -m unittest discover test/utest
+	PYTHONPATH=./src: coverage run --source=src -m unittest discover test/utest
 	coverage report
 	pybot -d test/test-results test/atest/suites/
 	kill `cat $<` && rm $<
@@ -77,12 +80,12 @@ github_doc:clean
 	git push origin gh-pages
 	git checkout master
 
-testpypi:doc
+testpypi:clean_dist doc
 	python setup.py register -r test
 	python setup.py sdist upload -r test --sign
 	@echo https://testpypi.python.org/pypi/robotframework-$(call lc,$(LIBRARY_NAME))/
 
-pypi:doc
+pypi:clean_dist doc
 	python setup.py register -r pypi
 	python setup.py sdist upload -r pypi --sign
 	@echo https://pypi.python.org/pypi/robotframework-$(call lc,$(LIBRARY_NAME))/

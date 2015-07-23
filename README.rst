@@ -1,5 +1,5 @@
-Amazon AWS DynamoDB testing library for Robot Framework
-=======================================================
+Amazon AWS DynamoDB big data testing library for Robot Framework
+================================================================
 
 Introduction
 ------------
