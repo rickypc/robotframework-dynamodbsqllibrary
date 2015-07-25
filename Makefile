@@ -25,7 +25,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 .PHONY: help test
 
 help:
-	@echo targets: clean, clean_dist, version, download, run, lint, test, doc, github_doc, testpypi, pypi
+	@echo targets: clean, clean_dist, version, install_devel_deps, download, run, lint, test, doc, github_doc, testpypi, pypi
 
 clean:
 	python setup.py clean --all
@@ -38,6 +38,10 @@ clean_dist:
 
 version:
 	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
+
+install_devel_deps:
+	python setup.py install
+	pip install coverage mock
 
 download:
 ifeq ($(CURL),)

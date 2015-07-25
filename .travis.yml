@@ -1,8 +1,5 @@
 language: python
-sudo: false
 python:
   - "2.7"
-# command to install dependencies
-install: "python setup.py install"
-# command to run tests
+install: make install_devel_deps
 script: make test
