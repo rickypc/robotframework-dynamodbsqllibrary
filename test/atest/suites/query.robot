@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 *** Settings ***
-Resource        test/atest/resources/common.robot
+Resource        ${CURDIR}${/}..${/}resources${/}common.robot
 Suite Setup     Suite Prepare With Default Table
 Suite Teardown  Suite Cleanup With Default Table
 
