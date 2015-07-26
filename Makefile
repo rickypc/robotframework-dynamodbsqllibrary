@@ -40,7 +40,7 @@ version:
 	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
 
 install_devel_deps:
-	python setup.py install
+	pip install -e .
 	pip install coverage mock
 
 download:
