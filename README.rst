@@ -1,6 +1,30 @@
 Amazon AWS DynamoDB big data testing library for Robot Framework
 ================================================================
 
+.. image:: https://img.shields.io/travis/rickypc/robotframework-dynamodbsqllibrary.svg
+       :target: https://travis-ci.org/rickypc/robotframework-dynamodbsqllibrary
+
+.. image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
+       :target: https://codecov.io/github/rickypc/robotframework-dynamodbsqllibrary
+
+.. image:: https://img.shields.io/codacy/242f6dae492b4d168d6a4f4a9d5f1fc0.svg
+       :target: https://www.codacy.com/app/rickypc/robotframework-dynamodbsqllibrary
+
+.. image:: https://img.shields.io/pypi/v/robotframework-dynamodbsqllibrary.svg
+       :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+
+.. image:: https://img.shields.io/pypi/status/robotframework-dynamodbsqllibrary.svg
+       :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+
+.. image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
+       :target: https://www.python.org/downloads/
+
+.. image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
+       :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+
+.. image:: https://img.shields.io/pypi/l/robotframework-dynamodbsqllibrary.svg
+       :target: https://www.gnu.org/licenses/agpl-3.0.en.html
+
 Introduction
 ------------
 
