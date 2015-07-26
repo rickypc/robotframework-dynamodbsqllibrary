@@ -37,7 +37,7 @@ clean_dist:
 	rm -rf dist
 
 version:
-	grep "VERSION = '*'" src/$(LIBRARY_NAME)/version.py
+	python -m robot.libdoc src/$(LIBRARY_NAME) version
 
 install_devel_deps:
 	pip install -e .
