@@ -57,13 +57,15 @@ class SessionManager(object):
 
         :param bool `is_secure`: Enforce https connection. (Default True)
 
-        :param str `label`: Session label, a case and space insensitive string.
+        :param str `label`: Session label, a case and space insensitive string. (Default :param str `region`)
 
         Examples:
-        | Create DynamoDB Session | region=us-west-1 | access_key=KEY | secret_key=SECRET | label=LABEL |
+        | Create DynamoDB Session | us-west-1 | access_key=KEY | secret_key=SECRET |             | # Label is us-west-1 |
+        | Create DynamoDB Session | us-west-1 | access_key=KEY | secret_key=SECRET | label=LABEL | # Label is LABEL     |
         """
         # pylint: disable=line-too-long
-        label = kwargs.pop('label', self._string.generate_random_string(32))
+        kargs = dict(enumerate(args))
+        label = kwargs.pop('label', kargs.get(0, self._string.generate_random_string(32)))
         self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
         session = Engine()
         session.connect(*args, **kwargs)

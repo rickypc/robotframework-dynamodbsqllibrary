@@ -47,11 +47,24 @@ class SessionManagerTests(unittest.TestCase):
 
     def test_create_should_register_new_session(self):
         """Create session should successfully register new session."""
-        self.session.create_dynamodb_session(self.region, label=self.label)
+        label = self.session.create_dynamodb_session(self.region, label=self.label)
+        self.assertEqual(label, self.label)
+        self.assertNotEqual(label, self.region)
         try:
-            self.session._cache.switch(self.label)
+            self.session._cache.switch(label)
         except RuntimeError:
-            self.fail("Label '%s' should be exist." % self.label)
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_with_region_as_label(self):
+        """Create session should successfully register new session with region as default label."""
+        label = self.session.create_dynamodb_session(self.region)
+        self.assertNotEqual(label, self.label)
+        self.assertEqual(label, self.region)
+        try:
+            self.session._cache.switch(label)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()
 
     def test_delete_should_remove_all_sessions(self):

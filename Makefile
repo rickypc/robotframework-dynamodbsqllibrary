@@ -41,7 +41,7 @@ version:
 
 install_devel_deps:
 	pip install -e .
-	pip install coverage mock
+	pip install coverage mock==1.0.1
 
 download:
 ifeq ($(CURL),)
