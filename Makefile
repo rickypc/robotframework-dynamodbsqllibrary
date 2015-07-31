@@ -71,8 +71,7 @@ lint:clean
 test:run
 	PYTHONPATH=./src: coverage run --source=src -m unittest discover test/utest
 	coverage report
-	pybot -d test/test-results test/atest/suites/
-	kill `cat $<` && rm $<
+	pybot -L DEBUG -d test/test-results test/atest/suites/; RETURN=$$?; kill `cat $<` && rm $<; exit $$RETURN
 
 doc:clean
 	python -m robot.libdoc src/$(LIBRARY_NAME) doc/$(LIBRARY_NAME).html

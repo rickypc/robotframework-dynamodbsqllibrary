@@ -22,7 +22,6 @@ Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like D
 """
 
 from robot.libraries.BuiltIn import BuiltIn
-from robot.libraries.String import String
 from robot.utils import ConnectionCache
 from sys import path
 path.append('src')
@@ -43,7 +42,6 @@ class SessionManagerTests(unittest.TestCase):
         """Class init should instantiate required classes."""
         self.assertIsInstance(self.session._builtin, BuiltIn)
         self.assertIsInstance(self.session._cache, ConnectionCache)
-        self.assertIsInstance(self.session._string, String)
 
     def test_create_should_register_new_session(self):
         """Create session should successfully register new session."""
@@ -74,3 +72,17 @@ class SessionManagerTests(unittest.TestCase):
         with self.assertRaises(RuntimeError) as context:
             self.session._cache.switch(self.label)
         self.assertTrue("Non-existing index or alias '%s'." % self.label in context.exception)
+
+    def test_delete_should_remove_requested_session(self):
+        """Delete session should successfully remove requested existing session."""
+        self.session.create_dynamodb_session(self.region)
+        self.session.create_dynamodb_session(self.region, label=self.label)
+        self.session.delete_dynamodb_session(self.region)
+        with self.assertRaises(RuntimeError) as context:
+            self.session._cache.switch(self.region)
+        self.assertTrue("Non-existing index or alias '%s'." % self.region in context.exception)
+        try:
+            self.session._cache.switch(self.label)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % self.label)
+        self.session.delete_all_dynamodb_sessions()

@@ -42,6 +42,25 @@ Session Does Not Exist
     ...  Non-existing index or alias '${LABEL}'.
     ...  Query DynamoDB  ${LABEL}  CREATE TABLE session (id STRING HASH KEY)
 
+Session Exists With Default Label
+    [Documentation]  Can validate session with default label existance, otherwise throw an error
+    Suite Prepare  ${EMPTY}
+    Query DynamoDB  ${REGION}  CREATE TABLE session (id STRING HASH KEY)
+    Query DynamoDB  ${REGION}  DROP TABLE session
+    Suite Cleanup
+
+Session Is Removed
+    [Documentation]  Can remove existing session, otherwise throw an error
+    Suite Prepare
+    Suite Prepare  local1
+    Delete DynamoDB Session  ${LABEL}
+    Run Keyword And Expect Error
+    ...  Non-existing index or alias '${LABEL}'.
+    ...  Query DynamoDB  ${LABEL}  CREATE TABLE session (id STRING HASH KEY)
+    Query DynamoDB  local1  CREATE TABLE session (id STRING HASH KEY)
+    Query DynamoDB  local1  DROP TABLE session
+    Suite Cleanup
+
 Multi Sessions Query Context
     [Documentation]  Can executes query across multiple sessions
     ${expected_frankfurt} =  Set Variable  [{"id":"frankfurt","bar":1},{"id":"frankfurt","bar":2}]

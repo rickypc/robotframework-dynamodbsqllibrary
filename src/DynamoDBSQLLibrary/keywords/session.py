@@ -23,7 +23,6 @@ Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like D
 
 from dql import Engine
 from robot.libraries.BuiltIn import BuiltIn
-from robot.libraries.String import String
 from robot.utils import ConnectionCache
 
 
@@ -33,7 +32,6 @@ class SessionManager(object):
     def __init__(self):
         self._builtin = BuiltIn()
         self._cache = ConnectionCache('No sessions.')
-        self._string = String()
 
     def create_dynamodb_session(self, *args, **kwargs):
         # pylint: disable=line-too-long
@@ -65,7 +63,7 @@ class SessionManager(object):
         """
         # pylint: disable=line-too-long
         kargs = dict(enumerate(args))
-        label = kwargs.pop('label', kargs.get(0, self._string.generate_random_string(32)))
+        label = kwargs.pop('label', kargs.get(0, None))
         self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
         session = Engine()
         session.connect(*args, **kwargs)
@@ -75,3 +73,19 @@ class SessionManager(object):
     def delete_all_dynamodb_sessions(self):
         """Removes all DynamoDB sessions."""
         self._cache.empty_cache()
+
+    def delete_dynamodb_session(self, label):
+        # pylint: disable=line-too-long
+        """Removes DynamoDB sessions.
+
+        :param str `label`: Session label, a case and space insensitive string. (Default :param str `region`)
+
+        Examples:
+        | Delete DynamoDB Session | LABEL |
+        """
+        # pylint: disable=line-too-long
+        self._cache.switch(label)
+        index = self._cache.current_index
+        self._cache.current = self._cache._no_current  # pylint: disable=protected-access
+        self._cache._connections[index - 1] = None  # pylint: disable=protected-access
+        self._cache._aliases['x-%s-x' % label] = self._cache._aliases.pop(label)  # pylint: disable=protected-access

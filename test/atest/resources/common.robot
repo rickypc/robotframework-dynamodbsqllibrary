@@ -40,10 +40,15 @@ Suite Cleanup With Default Table
 Suite Prepare
     [Arguments]  ${label}=local  ${host}=127.0.0.1  ${port}=8000  ${secure}=${false}
     [Documentation]  Create DynamoDB session
+    Log  ${label}
     ${is_secure} =  Convert To Boolean  ${secure}
     ${port_number} =  Convert To Integer  ${port}
-    Create DynamoDB Session  ${REGION}  host=${host}  port=${port_number}
-    ...  access_key=key  secret_key=secret  is_secure=${is_secure}  label=${label}
+    Run Keyword If  '${label}' == '${EMPTY}'  Create DynamoDB Session  ${REGION}
+    ...  host=${host}  port=${port_number}  access_key=key  secret_key=secret
+    ...  is_secure=${is_secure}
+    Run Keyword Unless  '${label}' == '${EMPTY}'  Create DynamoDB Session  ${REGION}
+    ...  host=${host}  port=${port_number}  access_key=key  secret_key=secret
+    ...  is_secure=${is_secure}  label=${label}
 
 Suite Prepare With Default Table
     [Arguments]  ${name}=foobar  ${label}=local  ${host}=127.0.0.1  ${port}=8000  ${secure}=${false}
