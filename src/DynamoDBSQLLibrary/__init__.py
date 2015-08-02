@@ -28,7 +28,6 @@ __version__ = get_version()
 
 
 class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
-    # pylint: disable=line-too-long
     """DynamoDBSQLibrary is a big data testing library for Robot Framework
     that gives you the capability to execute scan and query operations against
     multi Amazon DynamoDB sessions simultaneously using a SQL-like DSL.
@@ -43,15 +42,15 @@ class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     for more information on available DQL queries.
 
     Examples:
-    | `Create DynamoDB Session` | us-west-2      | access_key=key | secret_key=secret | label=oregon    |
-    | `Create DynamoDB Session` | ap-southeast-1 | access_key=key | secret_key=secret | label=singapore |
-    | `Create DynamoDB Session` | eu-central-1   | access_key=key | secret_key=secret | label=frankfurt |
+    | `Create DynamoDB Session`     | us-west-2      | label=oregon                |
+    | `Create DynamoDB Session`     | ap-southeast-1 | label=singapore             |
+    | `Create DynamoDB Session`     | eu-central-1   | label=frankfurt             |
     | `Query DynamoDB` | oregon     | CREATE TABLE mine (id STRING HASH KEY)       |
     | `Query DynamoDB` | singapore  | CREATE TABLE mine (id STRING HASH KEY)       |
     | `Query DynamoDB` | frankfurt  | CREATE TABLE mine (id STRING HASH KEY)       |
-    | `DynamoDB Table Should Exist` | oregon     | mine                            |
-    | `DynamoDB Table Should Exist` | singapore  | mine                            |
-    | `DynamoDB Table Should Exist` | frankfurt  | mine                            |
+    | `DynamoDB Table Should Exist` | oregon         | mine                        |
+    | `DynamoDB Table Should Exist` | singapore      | mine                        |
+    | `DynamoDB Table Should Exist` | frankfurt      | mine                        |
     | `Query DynamoDB` | oregon     | INSERT INTO mine (id) VALUES ('oregon')      |
     | `Query DynamoDB` | singapore  | INSERT INTO mine (id) VALUES ('singapore')   |
     | `Query DynamoDB` | frankfurt  | INSERT INTO mine (id) VALUES ('frankfurt')   |
@@ -62,8 +61,26 @@ class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     | `List And JSON String Should Be Equal` | ${singapore} | [{"id":"singapore"}] |
     | `List And JSON String Should Be Equal` | ${frankfurt} | [{"id":"frankfurt"}] |
     | `Delete All Dynamodb Sessions` |
+
+    *Config and Credentials File*
+
+    Set up config file in default location:
+
+    - ~/.aws/config (Linux/Mac)
+    - %USERPROFILE%\\.aws\\config (Windows)
+
+    | [default]
+    | region=us-east-1
+
+    Set up credentials file in default location:
+
+    - ~/.aws/credentials (Linux/Mac)
+    - %USERPROFILE%\\.aws\\credentials (Windows)
+
+    | [default]
+    | aws_access_key_id = YOUR_KEY
+    | aws_secret_access_key = YOUR_SECRET
     """
-    # pylint: disable=line-too-long
 
     ROBOT_EXIT_ON_FAILURE = True
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
