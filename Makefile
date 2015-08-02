@@ -63,8 +63,8 @@ install_devel_deps:
 	pip install -e .
 	pip install coverage mock==1.0.1
 	mkdir -p ~/.aws
-	[ -a ~/.aws/config ] && mv ~/.aws/config ~/.aws/config.bak
-	[ -a ~/.aws/credentials ] && mv ~/.aws/credentials ~/.aws/credentials.bak
+	[ -f ~/.aws/config ] && mv ~/.aws/config ~/.aws/config.bak
+	[ -f ~/.aws/credentials ] && mv ~/.aws/credentials ~/.aws/credentials.bak
 	@echo -e "[default]\nregion=us-east-1" > ~/.aws/config
 	@echo "$$AWS_CREDENTIALS" > ~/.aws/credentials
 
