@@ -27,6 +27,46 @@ from dynamo3.result import ResultSet
 class Query(object):
     """Query keywords for DynamoDB scan and query operations."""
 
+    def dynamodb_host(self, label):
+        """Returns DynamoDB session endpoint URL.
+
+        :param str `label`: Session label, a case and space insensitive string.
+
+        Examples:
+        | ${var} = | DynamoDB Host | LABEL |
+        """
+        # pylint: disable=no-member,protected-access
+        return self._cache.switch(label)._connection.host
+
+    def dynamodb_region(self, label):
+        """Returns DynamoDB session region.
+
+        :param str `label`: Session label, a case and space insensitive string.
+
+        Examples:
+        | ${var} = | DynamoDB Region | LABEL |
+        """
+        # pylint: disable=no-member,protected-access
+        return self._cache.switch(label)._connection.region
+
+    def list_dynamodb_tables(self, label, limit=100):
+        """Returns list of all tables on requested DynamoDB session.
+
+        :param str `label`: Session label, a case and space insensitive string.
+
+        :param int `limit`: Maximum number of tables to return. (Default 100)
+
+        Examples:
+        | @{var} = | List DynamoDB Tables | LABEL |
+        """
+        # pylint: disable=no-member
+        session = self._cache.switch(label)
+        # pylint: disable=protected-access
+        response = list(session._connection.list_tables(limit))
+        # pylint: disable=no-member
+        self._builtin.log("List tables response:\n%s" % response, 'DEBUG')
+        return response
+
     def query_dynamodb(self, label, commands):
         """Executes the SQL-like DSL commands on requested DynamoDB session.
 

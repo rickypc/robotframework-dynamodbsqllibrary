@@ -218,3 +218,20 @@ Multiple Statements
     @{actual} =  Query DynamoDB  ${LABEL}  ${commands}
     ${expected} =  Set Variable  [{"id":"a","foo":1},{"id":"b","foo":2}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
+
+Get Session Host
+    [Documentation]  Can get session host endpoint URL
+    ${response} =  DynamoDB Host  ${LABEL}
+    Should Be Equal  ${response}  http://127.0.0.1:8000
+
+Get Session Region
+    [Documentation]  Can get session region
+    ${response} =  DynamoDB Region  ${LABEL}
+    Should Be Equal  ${response}  ${REGION}
+
+List Tables
+    [Documentation]  Can list all tables
+    @{actual} =  List DynamoDB Tables  ${LABEL}
+    ${expected} =  Set Variable  ["foobar","multiple"]
+    ${order_number} =  Convert To Integer  0
+    List And JSON String Should Be Equal  ${actual}  ${expected}  ${order_number}

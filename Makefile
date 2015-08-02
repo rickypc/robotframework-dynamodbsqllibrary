@@ -86,7 +86,7 @@ ifeq ($(JAVA),)
 else
 	$(JAVA) -Djava.library.path=./bin/$(DYNAMO_NAME)_lib -jar \
 	./bin/$(DYNAMO_NAME).jar -delayTransientStatuses -inMemory \
-	2>/dev/null & echo $$! > $@;
+	>/dev/null 2>&1 & echo $$! > $@;
 endif
 
 lint:clean

@@ -42,6 +42,34 @@ class QueryTests(unittest.TestCase):
         self.query._builtin = mock.Mock()
         self.query._cache = mock.Mock()
 
+    def test_should_return_expected_host(self):
+        """Simulate query to return session host endpoint URL."""
+        self.engine._connection = mock.PropertyMock()
+        self.engine._connection.host = 'https://dynamodb.MY-REGION.amazonaws.com'
+        self.query._cache.switch.return_value = self.engine
+        response = self.query.dynamodb_host(self.label)
+        self.assertEqual(response, 'https://dynamodb.MY-REGION.amazonaws.com')
+
+    def test_should_return_expected_region(self):
+        """Simulate query to return session region."""
+        self.engine._connection = mock.PropertyMock()
+        self.engine._connection.region = 'MY-REGION'
+        self.query._cache.switch.return_value = self.engine
+        response = self.query.dynamodb_region(self.label)
+        self.assertEqual(response, 'MY-REGION')
+
+    def test_should_return_table_list(self):
+        """Simulate query to return table list."""
+        response = mock.create_autospec(ResultSet)
+        self.engine._connection = mock.PropertyMock()
+        self.engine._connection.list_tables = mock.Mock(return_value=response)
+        self.query._cache.switch.return_value = self.engine
+        self.query.list_dynamodb_tables(self.label)
+        self.query._cache.switch.assert_called_with(self.label)
+        self.engine._connection.list_tables.assert_called()
+        self.query._builtin.log.assert_called_with("List tables response:\n%s" %
+                                                   "[]", 'DEBUG')
+
     def test_query_should_return_string(self):
         """Simulate query to return string literal."""
         response = 'MY-RESPONSE'

@@ -83,7 +83,7 @@ class SessionManager(object):
             args = (None,)
         session.connect(*args, session=boto, **kwargs)
         if label is None:
-            label = session._connection.region
+            label = session._connection.region  # pylint: disable=protected-access
         self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
         self._cache.register(session, alias=label)
         return label
