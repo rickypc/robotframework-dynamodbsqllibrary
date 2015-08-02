@@ -90,7 +90,7 @@ Installation
 Using ``pip``
 '''''''''''''
 
-The recommended installation method is using `pip`__:
+The recommended installation method is using `pip`_:
 
 .. code:: bash
 
