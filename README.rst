@@ -1,29 +1,7 @@
 Amazon AWS DynamoDB big data testing library for Robot Framework
 ================================================================
 
-.. image:: https://img.shields.io/travis/rickypc/robotframework-dynamodbsqllibrary.svg
-       :target: https://travis-ci.org/rickypc/robotframework-dynamodbsqllibrary
-
-.. image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
-       :target: https://codecov.io/github/rickypc/robotframework-dynamodbsqllibrary
-
-.. image:: https://img.shields.io/codacy/242f6dae492b4d168d6a4f4a9d5f1fc0.svg
-       :target: https://www.codacy.com/app/rickypc/robotframework-dynamodbsqllibrary
-
-.. image:: https://img.shields.io/pypi/v/robotframework-dynamodbsqllibrary.svg
-       :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
-
-.. image:: https://img.shields.io/pypi/status/robotframework-dynamodbsqllibrary.svg
-       :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
-
-.. image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
-       :target: https://www.python.org/downloads/
-
-.. image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
-       :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
-
-.. image:: https://img.shields.io/pypi/l/robotframework-dynamodbsqllibrary.svg
-       :target: https://www.gnu.org/licenses/agpl-3.0.en.html
+|Build| |Coverage| |Grade| |Docs| |Version| |Status| |Python| |Download| |License|
 
 Introduction
 ------------
@@ -43,11 +21,11 @@ Example
 '''''''
 
 +-----------------------------+----------------+----------------+-------------------+-----------------+
-| Create DynamoDB Session     | us-west-2      | access_key=key | secret_key=secret | label=oregon    |
+| Create DynamoDB Session     | us-west-2      | label=oregon                                         |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
-| Create DynamoDB Session     | ap-southeast-1 | access_key=key | secret_key=secret | label=singapore |
+| Create DynamoDB Session     | ap-southeast-1 | label=singapore                                      |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
-| Create DynamoDB Session     | eu-central-1   | access_key=key | secret_key=secret | label=frankfurt |
+| Create DynamoDB Session     | eu-central-1   | label=frankfurt                                      |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
 | Query DynamoDB              | oregon         | CREATE TABLE mine (id STRING HASH KEY)               |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
@@ -82,13 +60,37 @@ Example
 | Delete All Dynamodb Sessions                                                                        |
 +-----------------------------+----------------+----------------+-------------------+-----------------+
 
+Config and Credentials File
+'''''''''''''''''''''''''''
+
+Set up config file in default location:
+
+- ~/.aws/config (Linux/Mac)
+- %USERPROFILE%\.aws\config (Windows)
+
+.. code-block:: ini
+
+    [default]
+    region=us-east-1
+
+Set up credentials file in default location:
+
+- ~/.aws/credentials (Linux/Mac)
+- %USERPROFILE%\.aws\credentials (Windows)
+
+.. code-block:: ini
+
+    [default]
+    aws_access_key_id = YOUR_KEY
+    aws_secret_access_key = YOUR_SECRET
+
 Installation
 ------------
 
 Using ``pip``
 '''''''''''''
 
-The recommended installation method is using `pip <http://pip-installer.org>`__:
+The recommended installation method is using `pip`__:
 
 .. code:: bash
 
@@ -119,8 +121,7 @@ Proxy configuration
 If you are behind a proxy, you can use ``--proxy`` command line option
 or set ``http_proxy`` and/or ``https_proxy`` environment variables to
 configure ``pip`` to use it. If you are behind an authenticating NTLM proxy,
-you may want to consider installing `CNTML <http://cntlm.sourceforge.net>`__
-to handle communicating with it.
+you may want to consider installing `CNTML`_ to handle communicating with it.
 
 For more information about ``--proxy`` option and using pip with proxies
 in general see:
@@ -136,7 +137,7 @@ If you do not have network connection or cannot make proxy to work, you need
 to resort to manual installation. This requires installing both the library
 and its dependencies yourself.
 
-- Make sure you have `Robot Framework installed <http://code.google.com/p/robotframework/wiki/Installation>`__.
+- Make sure you have `Robot Framework installed`_.
 
 - Download source distributions (``*.tar.gz``) for the library and its dependencies:
 
@@ -197,6 +198,9 @@ To write tests with Robot Framework and DynamoDBSQLLibrary,
 DynamoDBSQLLibrary must be imported into your Robot test suite.
 See `Robot Framework User Guide`_ for more information.
 
+More information about Robot Framework standard libraries and built-in tools
+can be found in the `Robot Framework Documentation`_.
+
 Building Keyword Documentation
 ------------------------------
 
@@ -209,6 +213,8 @@ The `Keyword Documentation`_ can be found online, if you need to generate the ke
 Run Unit Tests, Acceptance Tests, and Test Coverage Report
 ----------------------------------------------------------
 
+Test the testing library, talking about dogfooding, let's run:
+
 .. code:: bash
 
     make test
@@ -218,15 +224,48 @@ License
 
 Copyright (c) 2014 - 2015 Richard Huang.
 
-This library is free software, licensed under: `GNU Affero General Public License (AGPL-3.0) <http://www.gnu.org/licenses/agpl-3.0.en.html>`_.
+This library is free software, licensed under: `GNU Affero General Public License (AGPL-3.0)`_.
 
-Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-nc-sa/4.0/>`_.
+Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License`_.
 
 .. _Amazon DynamoDB: https://aws.amazon.com/dynamodb/
+.. _CNTML: http://cntlm.sourceforge.net
+.. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://creativecommons.org/licenses/by-nc-sa/4.0/
 .. _dql: https://dql.readthedocs.org/en/latest/
 .. _DQL Queries Documentation: https://dql.readthedocs.org/en/latest/topics/queries/index.html
 .. _DSL: https://en.wikipedia.org/wiki/Domain-specific_language
+.. _GNU Affero General Public License (AGPL-3.0): http://www.gnu.org/licenses/agpl-3.0.en.html
 .. _Keyword Documentation: https://rickypc.github.io/robotframework-dynamodbsqllibrary/doc/DynamoDBSQLLibrary.html
+.. _pip: http://pip-installer.org
 .. _Robot Framework: http://robotframework.org
-.. _Robot Framework User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
+.. _Robot Framework Documentation: http://robotframework.org/robotframework/
+.. _Robot Framework installed: https://github.com/robotframework/robotframework#installation
+.. _Robot Framework User Guide: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html
 .. _SQL-like: https://dql.readthedocs.org/en/latest/topics/queries/index.html
+.. |Build| image:: https://img.shields.io/travis/rickypc/robotframework-dynamodbsqllibrary.svg
+    :target: https://travis-ci.org/rickypc/robotframework-dynamodbsqllibrary
+    :alt: Build Status
+.. |Coverage| image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
+    :target: https://codecov.io/github/rickypc/robotframework-dynamodbsqllibrary
+    :alt: Code Coverage
+.. |Grade| image:: https://img.shields.io/codacy/242f6dae492b4d168d6a4f4a9d5f1fc0.svg
+    :target: https://www.codacy.com/app/rickypc/robotframework-dynamodbsqllibrary
+    :alt: Code Grade
+.. |Docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
+    :target: https://rickypc.github.io/robotframework-dynamodbsqllibrary/doc/DynamoDBSQLLibrary.html
+    :alt: Keyword Documentation
+.. |Version| image:: https://img.shields.io/pypi/v/robotframework-dynamodbsqllibrary.svg
+    :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+    :alt: Package Version
+.. |Status| image:: https://img.shields.io/pypi/status/robotframework-dynamodbsqllibrary.svg
+    :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+    :alt: Development Status
+.. |Python| image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
+    :target: https://www.python.org/downloads/
+    :alt: Python Version
+.. |Download| image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
+    :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+    :alt: Monthly Download
+.. |License| image:: https://img.shields.io/pypi/l/robotframework-dynamodbsqllibrary.svg
+    :target: https://www.gnu.org/licenses/agpl-3.0.en.html
+    :alt: License

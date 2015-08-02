@@ -20,12 +20,32 @@ LIBRARY_NAME = DynamoDBSQLLibrary
 
 CURL = $(shell which curl 2>/dev/null)
 JAVA = $(shell which java 2>/dev/null)
+SHELL := /bin/bash
 lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
+
+define AWS_CREDENTIALS
+[default]
+aws_access_key_id = ACCESS_KEY
+aws_secret_access_key = SECRET_KEY
+
+[profile1]
+aws_access_key_id = ACCESS_KEY_1
+aws_secret_access_key = SECRET_KEY_1
+region = us-west-1
+
+[profile2]
+aws_access_key_id = ACCESS_KEY_2
+aws_secret_access_key = SECRET_KEY_2
+region = us-west-2
+endef
+
+export AWS_CREDENTIALS
 
 .PHONY: help test
 
 help:
-	@echo targets: clean, clean_dist, version, install_devel_deps, download, run, lint, test, doc, github_doc, testpypi, pypi
+	@echo targets: clean, clean_dist, version, install_devel_deps, download, run, \
+	lint, test, test_unit, test_acceptance, doc, github_doc, testpypi, pypi
 
 clean:
 	python setup.py clean --all
@@ -42,6 +62,11 @@ version:
 install_devel_deps:
 	pip install -e .
 	pip install coverage mock==1.0.1
+	mkdir -p ~/.aws
+	[ -a ~/.aws/config ] && mv ~/.aws/config ~/.aws/config.bak
+	[ -a ~/.aws/credentials ] && mv ~/.aws/credentials ~/.aws/credentials.bak
+	@echo -e "[default]\nregion=us-east-1" > ~/.aws/config
+	@echo "$$AWS_CREDENTIALS" > ~/.aws/credentials
 
 download:
 ifeq ($(CURL),)
@@ -68,10 +93,15 @@ lint:clean
 	flake8 --max-complexity 10
 	pylint --rcfile=setup.cfg src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
 
-test:run
+test:test_unit test_acceptance
+
+test_acceptance: run
+	pybot -L DEBUG -d test/test-results test/atest/suites/ && { kill `cat $<` && rm $<; } || \
+	{ kill `cat $<` && rm $<; exit 1; }
+
+test_unit:
 	PYTHONPATH=./src: coverage run --source=src -m unittest discover test/utest
 	coverage report
-	pybot -L DEBUG -d test/test-results test/atest/suites/; RETURN=$$?; kill `cat $<` && rm $<; exit $$RETURN
 
 doc:clean
 	python -m robot.libdoc src/$(LIBRARY_NAME) doc/$(LIBRARY_NAME).html

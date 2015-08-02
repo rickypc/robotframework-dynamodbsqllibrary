@@ -21,6 +21,7 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
+from botocore.session import get_session, Session
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ConnectionCache
 from sys import path
@@ -61,6 +62,112 @@ class SessionManagerTests(unittest.TestCase):
         self.assertEqual(label, self.region)
         try:
             self.session._cache.switch(label)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_new_session_with_keys(self):
+        """Create session should successfully register new session with keys."""
+        label = self.session.create_dynamodb_session(access_key='key', secret_key='secret')
+        try:
+            self.session._cache.switch(label)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_new_session_with_default_config(self):
+        """Create session should successfully register new session with region from default config."""
+        config_region = 'us-east-1'
+        session = get_session()
+        label = self.session.create_dynamodb_session(session=session)
+        self.assertEqual(label, config_region)
+        self.assertNotEqual(label, self.region)
+        try:
+            session_client = self.session._cache.switch(label)
+            # configs and credentials only resolved after client creation
+            credentials = session._credentials
+            default_conf = session._config['profiles']['default']
+            self.assertEqual(credentials.access_key, 'ACCESS_KEY')
+            self.assertEqual(credentials.secret_key, 'SECRET_KEY')
+            self.assertEqual(default_conf['aws_access_key_id'], 'ACCESS_KEY')
+            self.assertEqual(default_conf['aws_secret_access_key'], 'SECRET_KEY')
+            self.assertEqual(default_conf['region'], config_region)
+            self.assertEqual(session_client._connection.region, config_region)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_new_session_with_all_default_values(self):
+        """Create session should successfully register new session with all default values from config."""
+        config_region = 'us-east-1'
+        label = self.session.create_dynamodb_session()
+        self.assertEqual(label, config_region)
+        self.assertNotEqual(label, self.region)
+        try:
+            session_client = self.session._cache.switch(label)
+            # configs and credentials only resolved after client creation
+            self.assertEqual(session_client._connection.region, config_region)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_new_session_with_default_keys(self):
+        """Create session should successfully register new session with default keys."""
+        session = get_session()
+        label = self.session.create_dynamodb_session(self.region, session=session, label=self.label)
+        self.assertEqual(label, self.label)
+        self.assertNotEqual(label, self.region)
+        try:
+            session_client = self.session._cache.switch(label)
+            # configs and credentials only resolved after client creation
+            credentials = session._credentials
+            default_conf = session._config['profiles']['default']
+            self.assertEqual(credentials.access_key, 'ACCESS_KEY')
+            self.assertEqual(credentials.secret_key, 'SECRET_KEY')
+            self.assertEqual(default_conf['aws_access_key_id'], 'ACCESS_KEY')
+            self.assertEqual(default_conf['aws_secret_access_key'], 'SECRET_KEY')
+            self.assertNotEqual(default_conf['region'], self.region)
+            self.assertEqual(session_client._connection.region, self.region)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_new_session_with_specified_profile(self):
+        """Create session should successfully register new session with specified profile."""
+        config_region = 'us-west-1'
+        default_config_region = 'us-east-1'
+        session = Session(profile='profile1')
+        label = self.session.create_dynamodb_session(session=session)
+        self.assertEqual(label, config_region)
+        self.assertNotEqual(label, self.region)
+        self.assertNotEqual(label, default_config_region)
+        try:
+            session_client = self.session._cache.switch(label)
+            # configs and credentials only resolved after client creation
+            credentials = session._credentials
+            profile_conf = session._config['profiles']['profile1']
+            self.assertEqual(credentials.access_key, 'ACCESS_KEY_1')
+            self.assertEqual(credentials.secret_key, 'SECRET_KEY_1')
+            self.assertEqual(profile_conf['aws_access_key_id'], 'ACCESS_KEY_1')
+            self.assertEqual(profile_conf['aws_secret_access_key'], 'SECRET_KEY_1')
+            self.assertNotEqual(profile_conf['region'], default_config_region)
+            self.assertEqual(session_client._connection.region, config_region)
+        except RuntimeError:
+            self.fail("Label '%s' should be exist." % label)
+        self.session.delete_all_dynamodb_sessions()
+
+    def test_create_should_register_new_session_with_specified_profile_2(self):
+        """Create session should successfully register new session with specified profile (without session)."""
+        config_region = 'us-west-2'
+        default_config_region = 'us-east-1'
+        label = self.session.create_dynamodb_session(profile='profile2')
+        self.assertEqual(label, config_region)
+        self.assertNotEqual(label, self.region)
+        self.assertNotEqual(label, default_config_region)
+        try:
+            session = self.session._cache.switch(label)
+            # configs and credentials only resolved after client creation
+            self.assertEqual(session._connection.region, config_region)
         except RuntimeError:
             self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()

@@ -49,6 +49,30 @@ Session Exists With Default Label
     Query DynamoDB  ${REGION}  DROP TABLE session
     Suite Cleanup
 
+Session Exists With All Default Values
+    [Documentation]  Can validate session with all default values existance, otherwise throw an error
+    ${port} =  Convert To Integer  8000
+    Create DynamoDB Session  host=127.0.0.1  port=${port}  is_secure=${false}
+    Query DynamoDB  us-east-1  CREATE TABLE session (id STRING HASH KEY)
+    Query DynamoDB  us-east-1  DROP TABLE session
+    Suite Cleanup
+
+Session Exists With Default Keys
+    [Documentation]  Can validate session with default keys existance, otherwise throw an error
+    ${port} =  Convert To Integer  8000
+    Create DynamoDB Session  ${REGION}  host=127.0.0.1  port=${port}  is_secure=${false}
+    Query DynamoDB  ${REGION}  CREATE TABLE session (id STRING HASH KEY)
+    Query DynamoDB  ${REGION}  DROP TABLE session
+    Suite Cleanup
+
+Session Exists With Specified Profile
+    [Documentation]  Can validate session with specified profile existance, otherwise throw an error
+    ${port} =  Convert To Integer  8000
+    Create DynamoDB Session  profile=profile1  host=127.0.0.1  port=${port}  is_secure=${false}
+    Query DynamoDB  us-west-1  CREATE TABLE session (id STRING HASH KEY)
+    Query DynamoDB  us-west-1  DROP TABLE session
+    Suite Cleanup
+
 Session Is Removed
     [Documentation]  Can remove existing session, otherwise throw an error
     Suite Prepare

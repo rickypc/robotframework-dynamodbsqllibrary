@@ -21,6 +21,7 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
+from botocore.session import Session
 from dql import Engine
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ConnectionCache
@@ -42,6 +43,9 @@ class SessionManager(object):
         :param botocore.session.Session `session`:
         The session object to user for the connection. (Optional)
 
+        :param str `profile`:
+        set this profile when creating the session. (Optional)
+
         :param str `access_key`: If `session` is None,
         set this access key when creating the session. (Optional)
 
@@ -58,15 +62,29 @@ class SessionManager(object):
         :param str `label`: Session label, a case and space insensitive string. (Default :param str `region`)
 
         Examples:
-        | Create DynamoDB Session | us-west-1 | access_key=KEY | secret_key=SECRET |             | # Label is us-west-1 |
-        | Create DynamoDB Session | us-west-1 | access_key=KEY | secret_key=SECRET | label=LABEL | # Label is LABEL     |
+        | Create DynamoDB Session |           |                  |                   |             | # Use default config  |
+        | Create DynamoDB Session | us-west-1 |                  |                   |             | # Use default profile |
+        | Create DynamoDB Session | us-west-1 | profile=profile1 |                   |             | # Use profile1        |
+        | Create DynamoDB Session | us-west-1 | access_key=KEY   | secret_key=SECRET |             | # Label is us-west-1  |
+        | Create DynamoDB Session | us-west-1 | access_key=KEY   | secret_key=SECRET | label=LABEL | # Label is LABEL      |
         """
         # pylint: disable=line-too-long
+        access_key = kwargs.pop('access_key', None)
+        boto = kwargs.pop('session', None)
         kargs = dict(enumerate(args))
         label = kwargs.pop('label', kargs.get(0, None))
-        self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
+        profile = kwargs.pop('profile', None)
         session = Engine()
-        session.connect(*args, **kwargs)
+        if boto is None:
+            boto = Session(profile=profile) if profile is not None else Session()
+            if access_key is not None:
+                boto.set_credentials(access_key, kwargs.pop('secret_key', None))
+        if len(args) == 0:
+            args = (None,)
+        session.connect(*args, session=boto, **kwargs)
+        if label is None:
+            label = session._connection.region
+        self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
         self._cache.register(session, alias=label)
         return label
 
