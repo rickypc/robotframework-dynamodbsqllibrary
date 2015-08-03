@@ -58,15 +58,13 @@ class QueryTests(unittest.TestCase):
         response = self.query.dynamodb_region(self.label)
         self.assertEqual(response, 'MY-REGION')
 
-    def test_should_return_table_list(self):
+    @mock.patch("DynamoDBSQLLibrary.keywords.query.ResultSet")
+    def test_should_return_table_list(self, mock_rs):
         """Simulate query to return table list."""
-        response = mock.create_autospec(ResultSet)
-        self.engine.connection = mock.PropertyMock()
-        self.engine.connection.list_tables = mock.Mock(return_value=response)
         self.query._cache.switch.return_value = self.engine
         self.query.list_dynamodb_tables(self.label)
         self.query._cache.switch.assert_called_with(self.label)
-        self.engine.connection.list_tables.assert_called()
+        mock_rs.assert_called_with(self.engine.connection, 'TableNames', 'list_tables', Limit=100)
         self.query._builtin.log.assert_called_with("List tables response:\n%s" %
                                                    "[]", 'DEBUG')
 
