@@ -21,7 +21,8 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
-from botocore.session import Session
+from boto3.session import Session
+from dynamo3 import DynamoDBConnection
 from dql import Engine
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ConnectionCache
@@ -52,6 +53,9 @@ class SessionManager(object):
         :param str `secret_key`: If `session` is None,
         set this secret key when creating the session. (Optional)
 
+        :param str `session_token`: If `session` is None,
+        set this session token when creating the session. (Optional)
+
         :param str `host`: Address of the host.
         Use this to connect to a local instance. (Optional)
 
@@ -69,21 +73,29 @@ class SessionManager(object):
         | Create DynamoDB Session | us-west-1 | access_key=KEY   | secret_key=SECRET | label=LABEL | # Label is LABEL      |
         """
         # pylint: disable=line-too-long
-        access_key = kwargs.pop('access_key', None)
-        boto = kwargs.pop('session', None)
         kargs = dict(enumerate(args))
-        label = kwargs.pop('label', kargs.get(0, None))
-        profile = kwargs.pop('profile', None)
+        region = kargs.get(0, kwargs.pop('region', None))
+        label = kwargs.pop('label', region)
         session = Engine()
-        if boto is None:
-            boto = Session(profile=profile) if profile is not None else Session()
-            if access_key is not None:
-                boto.set_credentials(access_key, kwargs.pop('secret_key', None))
-        if len(args) == 0:
-            args = (None,)
-        session.connect(*args, session=boto, **kwargs)
+        # pylint: disable=protected-access
+        session._session = kwargs.pop('session', None)
+        # pylint: disable=protected-access
+        if session._session is None:
+            # pylint: disable=protected-access
+            session._session = self._get_session(region=region, **kwargs)
+        # pylint: disable=protected-access
+        client = self._get_client(session._session, region=region, **kwargs)
+        kwargs.pop('access_key', None)
+        kwargs.pop('host', None)
+        kwargs.pop('is_secure', None)
+        kwargs.pop('port', None)
+        kwargs.pop('profile', None)
+        kwargs.pop('secret_key', None)
+        kwargs.pop('session_token', None)
+        session.connection = DynamoDBConnection(client, **kwargs)
         if label is None:
-            label = session._connection.region  # pylint: disable=protected-access
+            label = session.connection.region
+        # pylint: disable=protected-access
         self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
         self._cache.register(session, alias=label)
         return label
@@ -93,17 +105,65 @@ class SessionManager(object):
         self._cache.empty_cache()
 
     def delete_dynamodb_session(self, label):
-        # pylint: disable=line-too-long
         """Removes DynamoDB sessions.
 
-        :param str `label`: Session label, a case and space insensitive string. (Default :param str `region`)
+        :param str `label`: Session label, a case and space insensitive string.
+        (Default :param str `region`)
 
         Examples:
         | Delete DynamoDB Session | LABEL |
         """
-        # pylint: disable=line-too-long
         self._cache.switch(label)
         index = self._cache.current_index
-        self._cache.current = self._cache._no_current  # pylint: disable=protected-access
-        self._cache._connections[index - 1] = None  # pylint: disable=protected-access
-        self._cache._aliases['x-%s-x' % label] = self._cache._aliases.pop(label)  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        self._cache.current = self._cache._no_current
+        # pylint: disable=protected-access
+        self._cache._connections[index - 1] = None
+        # pylint: disable=protected-access
+        self._cache._aliases['x-%s-x' % label] = self._cache._aliases.pop(label)
+
+    def _get_client(self, session, **kwargs):
+        """Returns boto3 client session object."""
+        client_kwargs = {}
+        host = kwargs.pop('host', None)
+        is_secure = kwargs.pop('is_secure', True)
+        port = kwargs.pop('port', None)
+        region = kwargs.pop('region', None)
+        url = self._get_url(host, port, is_secure)
+        if region is not None:
+            client_kwargs['region_name'] = region
+        if url is not None:
+            client_kwargs['endpoint_url'] = url
+        if not is_secure:
+            client_kwargs['use_ssl'] = is_secure
+        return session.client('dynamodb', **client_kwargs)
+
+    @staticmethod
+    def _get_session(**kwargs):
+        """Returns boto3 session object."""
+        access_key = kwargs.pop('access_key', None)
+        profile = kwargs.pop('profile', None)
+        region = kwargs.pop('region', None)
+        session_kwargs = {}
+        token = kwargs.pop('session_token', None)
+        if access_key is not None:
+            session_kwargs['aws_access_key_id'] = access_key
+            session_kwargs['aws_secret_access_key'] = kwargs.pop('secret_key', None)
+        if profile is not None:
+            session_kwargs['profile_name'] = profile
+        if region is not None:
+            session_kwargs['region_name'] = region
+        if token is not None:
+            session_kwargs['aws_session_token'] = token
+        return Session(**session_kwargs)
+
+    @staticmethod
+    def _get_url(host, port, is_secure=True):
+        """Returns pre-format host endpoint URL."""
+        url = None
+        if host is not None:
+            protocol = 'https' if is_secure else 'http'
+            url = '%s://%s' % (protocol, host)
+            if port is not None:
+                url += ':%d' % int(port)
+        return url

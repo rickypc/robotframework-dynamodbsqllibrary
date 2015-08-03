@@ -35,8 +35,8 @@ class Query(object):
         Examples:
         | ${var} = | DynamoDB Host | LABEL |
         """
-        # pylint: disable=no-member,protected-access
-        return self._cache.switch(label)._connection.host
+        # pylint: disable=no-member
+        return self._cache.switch(label).connection.host
 
     def dynamodb_region(self, label):
         """Returns DynamoDB session region.
@@ -46,23 +46,26 @@ class Query(object):
         Examples:
         | ${var} = | DynamoDB Region | LABEL |
         """
-        # pylint: disable=no-member,protected-access
-        return self._cache.switch(label)._connection.region
+        # pylint: disable=no-member
+        return self._cache.switch(label).connection.region
 
-    def list_dynamodb_tables(self, label, limit=100):
+    def list_dynamodb_tables(self, label, **kwargs):
         """Returns list of all tables on requested DynamoDB session.
 
         :param str `label`: Session label, a case and space insensitive string.
 
-        :param int `limit`: Maximum number of tables to return. (Default 100)
+        :param int `Limit`: Maximum number of tables to return. (Default 100)
 
         Examples:
-        | @{var} = | List DynamoDB Tables | LABEL |
+        | @{var} = | List DynamoDB Tables | LABEL |                           |         |
+        | @{var} = | List DynamoDB Tables | LABEL | Limit=1                   |         |
+        | @{var} = | List DynamoDB Tables | LABEL | ExclusiveStartTableName=a |         |
+        | @{var} = | List DynamoDB Tables | LABEL | ExclusiveStartTableName=a | Limit=1 |
         """
         # pylint: disable=no-member
         session = self._cache.switch(label)
-        # pylint: disable=protected-access
-        response = list(session._connection.list_tables(limit))
+        response = list(ResultSet(session.connection, 'TableNames', 'list_tables',
+                                  Limit=int(kwargs.pop('Limit', 100)), **kwargs))
         # pylint: disable=no-member
         self._builtin.log("List tables response:\n%s" % response, 'DEBUG')
         return response

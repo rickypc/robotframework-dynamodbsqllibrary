@@ -231,7 +231,10 @@ Get Session Region
 
 List Tables
     [Documentation]  Can list all tables
-    @{actual} =  List DynamoDB Tables  ${LABEL}
-    ${expected} =  Set Variable  ["foobar","multiple"]
+    ${commands} =  Catenate  CREATE TABLE something1 (id STRING HASH KEY);
+    ...  CREATE TABLE thing1 (id STRING HASH KEY);
+    Query DynamoDB  ${LABEL}  ${commands}
+    @{actual} =  List DynamoDB Tables  ${LABEL}  ExclusiveStartTableName=some  Limit=1
+    ${expected} =  Set Variable  ["something1"]
     ${order_number} =  Convert To Integer  0
     List And JSON String Should Be Equal  ${actual}  ${expected}  ${order_number}

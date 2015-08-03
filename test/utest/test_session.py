@@ -21,7 +21,7 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
-from botocore.session import get_session, Session
+from boto3.session import Session
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ConnectionCache
 from sys import path
@@ -78,21 +78,20 @@ class SessionManagerTests(unittest.TestCase):
     def test_create_should_register_new_session_with_default_config(self):
         """Create session should successfully register new session with region from default config."""
         config_region = 'us-east-1'
-        session = get_session()
-        label = self.session.create_dynamodb_session(session=session)
+        label = self.session.create_dynamodb_session()
         self.assertEqual(label, config_region)
         self.assertNotEqual(label, self.region)
         try:
-            session_client = self.session._cache.switch(label)
+            session = self.session._cache.switch(label)
             # configs and credentials only resolved after client creation
-            credentials = session._credentials
-            default_conf = session._config['profiles']['default']
+            credentials = session._session._session._credentials
+            default_conf = session._session._session._config['profiles']['default']
             self.assertEqual(credentials.access_key, 'ACCESS_KEY')
             self.assertEqual(credentials.secret_key, 'SECRET_KEY')
             self.assertEqual(default_conf['aws_access_key_id'], 'ACCESS_KEY')
             self.assertEqual(default_conf['aws_secret_access_key'], 'SECRET_KEY')
             self.assertEqual(default_conf['region'], config_region)
-            self.assertEqual(session_client._connection.region, config_region)
+            self.assertEqual(session.connection.region, config_region)
         except RuntimeError:
             self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()
@@ -106,28 +105,27 @@ class SessionManagerTests(unittest.TestCase):
         try:
             session_client = self.session._cache.switch(label)
             # configs and credentials only resolved after client creation
-            self.assertEqual(session_client._connection.region, config_region)
+            self.assertEqual(session_client.connection.region, config_region)
         except RuntimeError:
             self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()
 
     def test_create_should_register_new_session_with_default_keys(self):
         """Create session should successfully register new session with default keys."""
-        session = get_session()
-        label = self.session.create_dynamodb_session(self.region, session=session, label=self.label)
+        label = self.session.create_dynamodb_session(self.region, label=self.label)
         self.assertEqual(label, self.label)
         self.assertNotEqual(label, self.region)
         try:
-            session_client = self.session._cache.switch(label)
+            session = self.session._cache.switch(label)
             # configs and credentials only resolved after client creation
-            credentials = session._credentials
-            default_conf = session._config['profiles']['default']
+            credentials = session._session._session._credentials
+            default_conf = session._session._session._config['profiles']['default']
             self.assertEqual(credentials.access_key, 'ACCESS_KEY')
             self.assertEqual(credentials.secret_key, 'SECRET_KEY')
             self.assertEqual(default_conf['aws_access_key_id'], 'ACCESS_KEY')
             self.assertEqual(default_conf['aws_secret_access_key'], 'SECRET_KEY')
             self.assertNotEqual(default_conf['region'], self.region)
-            self.assertEqual(session_client._connection.region, self.region)
+            self.assertEqual(session.connection.region, self.region)
         except RuntimeError:
             self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()
@@ -136,22 +134,21 @@ class SessionManagerTests(unittest.TestCase):
         """Create session should successfully register new session with specified profile."""
         config_region = 'us-west-1'
         default_config_region = 'us-east-1'
-        session = Session(profile='profile1')
-        label = self.session.create_dynamodb_session(session=session)
+        label = self.session.create_dynamodb_session(profile='profile1')
         self.assertEqual(label, config_region)
         self.assertNotEqual(label, self.region)
         self.assertNotEqual(label, default_config_region)
         try:
-            session_client = self.session._cache.switch(label)
+            session = self.session._cache.switch(label)
             # configs and credentials only resolved after client creation
-            credentials = session._credentials
-            profile_conf = session._config['profiles']['profile1']
+            credentials = session._session._session._credentials
+            profile_conf = session._session._session._config['profiles']['profile1']
             self.assertEqual(credentials.access_key, 'ACCESS_KEY_1')
             self.assertEqual(credentials.secret_key, 'SECRET_KEY_1')
             self.assertEqual(profile_conf['aws_access_key_id'], 'ACCESS_KEY_1')
             self.assertEqual(profile_conf['aws_secret_access_key'], 'SECRET_KEY_1')
             self.assertNotEqual(profile_conf['region'], default_config_region)
-            self.assertEqual(session_client._connection.region, config_region)
+            self.assertEqual(session.connection.region, config_region)
         except RuntimeError:
             self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()
@@ -167,7 +164,7 @@ class SessionManagerTests(unittest.TestCase):
         try:
             session = self.session._cache.switch(label)
             # configs and credentials only resolved after client creation
-            self.assertEqual(session._connection.region, config_region)
+            self.assertEqual(session.connection.region, config_region)
         except RuntimeError:
             self.fail("Label '%s' should be exist." % label)
         self.session.delete_all_dynamodb_sessions()
@@ -193,3 +190,97 @@ class SessionManagerTests(unittest.TestCase):
         except RuntimeError:
             self.fail("Label '%s' should be exist." % self.label)
         self.session.delete_all_dynamodb_sessions()
+
+    def test_should_return_client(self):
+        """Should return client session object."""
+        config_region = 'us-east-1'
+        session = Session()
+        client = self.session._get_client(session)
+        self.assertEqual(str(client._endpoint),
+                         'dynamodb(https://dynamodb.%s.amazonaws.com)' % config_region)
+        self.assertEqual(client._client_config.region_name, config_region)
+        self.assertEqual(client.meta._endpoint_url,
+                         'https://dynamodb.%s.amazonaws.com' % config_region)
+
+    def test_should_return_client_with_requested_values(self):
+        """Should return client session object with requested input values."""
+        config_region = 'us-west-2'
+        host = '127.0.0.1'
+        port = 8000
+        session = Session()
+        client = self.session._get_client(session, host=host, is_secure=False,
+                                          port=port, region=config_region)
+        self.assertEqual(str(client._endpoint), 'dynamodb(http://%s:%s)' % (host, port))
+        self.assertEqual(client._client_config.region_name, config_region)
+        self.assertEqual(client.meta._endpoint_url, 'http://%s:%s' % (host, port))
+
+    def test_should_return_session(self):
+        """Should return session object."""
+        config_region = 'us-east-1'
+        session = self.session._get_session()
+        default_conf = session._session._config['profiles']['default']
+        self.assertEqual(default_conf['aws_access_key_id'], 'ACCESS_KEY')
+        self.assertEqual(default_conf['aws_secret_access_key'], 'SECRET_KEY')
+        self.assertEqual(default_conf['region'], config_region)
+
+    def test_should_return_session_with_requested_values(self):
+        """Should return session object with requested input values."""
+        access_key = 'key'
+        config_region = 'us-west-2'
+        default_config_region = 'us-east-1'
+        profile = 'profile1'
+        secret_key = 'secret'
+        session_token = 'session'
+        session = self.session._get_session(access_key=access_key, profile=profile,
+                                            region=config_region, secret_key=secret_key,
+                                            session_token=session_token)
+        credentials = session._session._credentials
+        default_conf = session._session._config['profiles']['default']
+        var = session._session._session_instance_vars
+        self.assertEqual(credentials.access_key, access_key)
+        self.assertEqual(credentials.secret_key, secret_key)
+        self.assertEqual(credentials.token, session_token)
+        self.assertEqual(default_conf['aws_access_key_id'], 'ACCESS_KEY')
+        self.assertEqual(default_conf['aws_secret_access_key'], 'SECRET_KEY')
+        self.assertEqual(default_conf['region'], default_config_region)
+        self.assertEqual(var['profile'], profile)
+        self.assertEqual(var['region'], config_region)
+
+    def test_get_url_should_return_none(self):
+        """Should return None on no input values."""
+        host = None
+        port = None
+        is_secure = None
+        url = self.session._get_url(host, port, is_secure)
+        self.assertIsNone(url)
+
+    def test_get_url_should_return_url(self):
+        """Should return URL."""
+        host = '127.0.0.1'
+        port = None
+        url = self.session._get_url(host, port)
+        self.assertEqual(url, 'https://127.0.0.1')
+
+    def test_get_url_should_return_url_with_port(self):
+        """Should return URL with port numbers."""
+        host = '127.0.0.1'
+        port = 80
+        is_secure = None
+        url = self.session._get_url(host, port, is_secure)
+        self.assertEqual(url, 'http://127.0.0.1:80')
+
+    def test_get_url_should_return_url_with_ssl(self):
+        """Should return URL without SSL."""
+        host = '127.0.0.1'
+        port = 80
+        is_secure = True
+        url = self.session._get_url(host, port, is_secure)
+        self.assertEqual(url, 'https://127.0.0.1:80')
+
+    def test_get_url_should_return_url_without_ssl(self):
+        """Should return URL without SSL."""
+        host = '127.0.0.1'
+        port = 80
+        is_secure = False
+        url = self.session._get_url(host, port, is_secure)
+        self.assertEqual(url, 'http://127.0.0.1:80')

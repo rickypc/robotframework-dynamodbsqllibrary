@@ -56,5 +56,5 @@ setup(
     platforms='any',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    install_requires=['dql >= 0.4.1', 'robotframework >= 2.6.0']
+    install_requires=['boto3 >= 1.1.1', 'dql >= 0.4.1', 'robotframework >= 2.6.0']
 )
