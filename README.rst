@@ -90,7 +90,7 @@ Installation
 Using ``pip``
 '''''''''''''
 
-The recommended installation method is using `pip`_:
+The recommended installation method is using pip_:
 
 .. code:: bash
 
@@ -121,7 +121,7 @@ Proxy configuration
 If you are behind a proxy, you can use ``--proxy`` command line option
 or set ``http_proxy`` and/or ``https_proxy`` environment variables to
 configure ``pip`` to use it. If you are behind an authenticating NTLM proxy,
-you may want to consider installing `CNTML`_ to handle communicating with it.
+you may want to consider installing CNTML_ to handle communicating with it.
 
 For more information about ``--proxy`` option and using pip with proxies
 in general see:
