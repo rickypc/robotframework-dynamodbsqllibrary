@@ -100,13 +100,27 @@ class Assertion(object):
                 raise
 
     def json_loads(self, text):
-        """Returns JSON from JSON string.
+        # pylint: disable=line-too-long
+        """Returns JSON from JSON string with object restoration support.
 
         :param str `text`: JSON string.
 
+        *Supported object restoration*
+        | `py/dict`                    |
+        | `py/tuple`                   |
+        | `py/set`                     |
+        | `py/collections.namedtuple`  |
+        | `py/collections.OrderedDict` |
+
         Examples:
         | @{var} = | JSON Loads | [{"key":"value"}] |
+        | @{var} = | JSON Loads | [{"py/dict":{"key":"value"}}] |
+        | @{var} = | JSON Loads | [{"py/tuple":(1,2,3)}] |
+        | @{var} = | JSON Loads | [{"py/set":[1,2,3]}] |
+        | @{var} = | JSON Loads | [{"py/collections.namedtuple":{"fields":"a b c","type":"NAME","values":(0,1,2)}}] |
+        | @{var} = | JSON Loads | [{"py/collections.OrderedDict":[("key2",2),("key1",1)]}] |
         """
+        # pylint: disable=line-too-long
         return loads(text, object_hook=self._restore, parse_float=Decimal)
 
     def list_and_json_string_should_be_equal(self, actual, expected_text, order_by='id'):
@@ -115,6 +129,7 @@ class Assertion(object):
         :param list `actual`: The list to be compare to JSON object from given JSON string.
 
         :param str `expected_text`: The JSON string to be compare to the given list.
+        Please see `JSON Loads` for more details.
 
         :param str `order_by`: The key to be use to sort the list. (Default 'id')
 
