@@ -71,7 +71,7 @@ Set up config file in default location:
 .. code-block:: ini
 
     [default]
-    region=us-east-1
+    region = us-east-1
 
 Set up credentials file in default location:
 
@@ -83,6 +83,11 @@ Set up credentials file in default location:
     [default]
     aws_access_key_id = YOUR_KEY
     aws_secret_access_key = YOUR_SECRET
+
+    [another_profile]
+    aws_access_key_id = ANOTHER_KEY
+    aws_secret_access_key = ANOTHER_SECRET
+    region = us-west-1
 
 Installation
 ------------

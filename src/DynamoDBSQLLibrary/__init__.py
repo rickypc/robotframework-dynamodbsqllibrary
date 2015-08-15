@@ -70,7 +70,7 @@ class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     - %USERPROFILE%\\.aws\\config (Windows)
 
     | [default]
-    | region=us-east-1
+    | region = us-east-1
 
     Set up credentials file in default location:
 
@@ -80,6 +80,11 @@ class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
     | [default]
     | aws_access_key_id = YOUR_KEY
     | aws_secret_access_key = YOUR_SECRET
+    |
+    | [another_profile]
+    | aws_access_key_id = ANOTHER_KEY
+    | aws_secret_access_key = ANOTHER_SECRET
+    | region = us-west-1
     """
 
     ROBOT_EXIT_ON_FAILURE = True
