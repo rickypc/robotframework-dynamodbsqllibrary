@@ -105,7 +105,7 @@ class SessionManager(object):
         self._cache.empty_cache()
 
     def delete_dynamodb_session(self, label):
-        """Removes DynamoDB sessions.
+        """Removes DynamoDB session.
 
         :param str `label`: Session label, a case and space insensitive string.
         (Default :param str `region`)
