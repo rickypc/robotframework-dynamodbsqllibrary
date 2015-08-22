@@ -38,11 +38,10 @@ class Assertion(object):
         # pylint: disable=line-too-long
         """Validate if the given operands are equal.
 
-        :param str `label`: Session label, a case and space insensitive string.
-
-        :param str `dump1`: First table schema dump to be validated.
-
-        :param str `dump2`: Second table schema dump to be validated.
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+        - ``dump1``: The first table schema dump to be validated.
+        - ``dump2``: The second table schema dump to be validated.
 
         Examples:
         | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump1 (bar NUMBER RANGE KEY,id STRING HASH KEY) | # PASS |
@@ -55,11 +54,11 @@ class Assertion(object):
             raise AssertionError("DynamoDBSQLLibraryError: Table schema dumps are different")
 
     def dynamodb_table_should_exist(self, label, table_name):
-        """Validates if the given `table_name` exists in the requested DynamoDB session.
+        """Validates if the given ``table_name`` exists in the requested DynamoDB session.
 
-        :param str `label`: Session label, a case and space insensitive string.
-
-        :param str `table_name`: Table name to be validated.
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+        - ``table_name``: The table name to be validated.
 
         Examples:
         | DynamoDB Table Should Exist | LABEL | my-table            | # PASS |
@@ -77,11 +76,11 @@ class Assertion(object):
                 raise
 
     def dynamodb_table_should_not_exist(self, label, table_name):
-        """Validates if the given `table_name` does not exist in the requested DynamoDB session.
+        """Validates if the given ``table_name`` does not exist in the requested DynamoDB session.
 
-        :param str `label`: Session label, a case and space insensitive string.
-
-        :param str `table_name`: Table name to be validated.
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+        - ``table_name``: The table name to be validated.
 
         Examples:
         | DynamoDB Table Should Not Exist | LABEL | non-existance-table | # PASS |
@@ -101,11 +100,12 @@ class Assertion(object):
 
     def json_loads(self, text):
         # pylint: disable=line-too-long
-        """Returns JSON from JSON string with object restoration support.
+        """Returns JSON object from JSON string with object restoration support.
 
-        :param str `text`: JSON string.
+        Arguments:
+        - ``text``: JSON string.
 
-        *Supported object restoration*
+        Supported object restoration:
         | `py/dict`                    |
         | `py/tuple`                   |
         | `py/set`                     |
@@ -126,12 +126,11 @@ class Assertion(object):
     def list_and_json_string_should_be_equal(self, actual, expected_text, order_by='id'):
         """Fails if deep compare of the given list and JSON string are unequal.
 
-        :param list `actual`: The list to be compare to JSON object from given JSON string.
-
-        :param str `expected_text`: The JSON string to be compare to the given list.
-        Please see `JSON Loads` for more details.
-
-        :param str `order_by`: The key to be use to sort the list. (Default 'id')
+        Arguments:
+        - ``actual``: The list to be compare to JSON object from given JSON string.
+        - ``expected_text``: The JSON string to be compare to the given list.
+                             Please see ``JSON Loads`` for more details.
+        - ``order_by``: The key to be use to sort the list. (Default 'id')
 
         Examples:
         | ${dict} = | Create Dictionary | id | 1 | key | value |
@@ -145,11 +144,10 @@ class Assertion(object):
     def lists_deep_compare(list1, list2, order_by='id'):
         """Returns deep compare results of the given lists.
 
-        :param list `list1`: First list to be compare to second list.
-
-        :param list `list2`: Second list to be compare to first list.
-
-        :param str `order_by`: The key to be use to sort the list. (Default 'id')
+        Arguments:
+        - ``list1``: The first list to be compare to second list.
+        - ``list2``: The second list to be compare to first list.
+        - ``order_by``: The key to be use to sort the list. (Default 'id')
 
         Examples:
         | ${dict1} = | Create Dictionary | id | 1 | key | value |
@@ -164,11 +162,10 @@ class Assertion(object):
     def lists_deep_compare_should_be_equal(self, list1, list2, order_by='id'):
         """Fails if deep compare of the given lists are unequal.
 
-        :param list `list1`: First list to be compare to second list.
-
-        :param list `list2`: Second list to be compare to first list.
-
-        :param str `order_by`: The key to be use to sort the list. (Default 'id')
+        Arguments:
+        - ``list1``: The first list to be compare to second list.
+        - ``list2``: The second list to be compare to first list.
+        - ``order_by``: The key to be use to sort the list. (Default 'id')
 
         Examples:
         | ${dict1} = | Create Dictionary | id | 1 | key | value |

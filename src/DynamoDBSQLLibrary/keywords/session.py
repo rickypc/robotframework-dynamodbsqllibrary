@@ -39,31 +39,21 @@ class SessionManager(object):
         # pylint: disable=line-too-long
         """Create DynamoDB session object.
 
-        :param str `region`: Name of AWS region.
-
-        :param botocore.session.Session `session`:
-        The session object to user for the connection. (Optional)
-
-        :param str `profile`:
-        set this profile when creating the session. (Optional)
-
-        :param str `access_key`: If `session` is None,
-        set this access key when creating the session. (Optional)
-
-        :param str `secret_key`: If `session` is None,
-        set this secret key when creating the session. (Optional)
-
-        :param str `session_token`: If `session` is None,
-        set this session token when creating the session. (Optional)
-
-        :param str `host`: Address of the host.
-        Use this to connect to a local instance. (Optional)
-
-        :param int `port`: Connect to the host on this port. (Default 80)
-
-        :param bool `is_secure`: Enforce https connection. (Default True)
-
-        :param str `label`: Session label, a case and space insensitive string. (Default :param str `region`)
+        Arguments:
+        - ``region``: The name of AWS region.
+        - ``session``: The session object to AWS connection. (Optional)
+        - ``profile``: The profile name to be use to create the session. (Optional)
+        - ``access_key``: If ``session`` is None,
+                          use this access key to create the session. (Optional)
+        - ``secret_key``: If ``session`` is None,
+                          use this secret key to create the session. (Optional)
+        - ``session_token``: If ``session`` is None,
+                             use this session token to create the session. (Optional)
+        - ``host``: The address of the host. Use this to connect to a local instance. (Optional)
+        - ``port``: Connect to the host on this port. (Default 80)
+        - ``is_secure``: Enforce https connection. (Default True)
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+                     (Default ``region``)
 
         Examples:
         | Create DynamoDB Session |           |                  |                   |             | # Use default config  |
@@ -107,8 +97,9 @@ class SessionManager(object):
     def delete_dynamodb_session(self, label):
         """Removes DynamoDB session.
 
-        :param str `label`: Session label, a case and space insensitive string.
-        (Default :param str `region`)
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+                     (Default ``region``)
 
         Examples:
         | Delete DynamoDB Session | LABEL |

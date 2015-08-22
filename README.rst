@@ -224,6 +224,17 @@ Test the testing library, talking about dogfooding, let's run:
 
     make test
 
+Contributing
+------------
+
+If you would like to contribute code to DynamoDB SQL Library project you can do so through GitHub by forking the repository and sending a pull request.
+
+When submitting code, please make every effort to follow existing conventions and style in order to keep the code as readable as possible. Please also include appropriate test cases.
+
+Before your code can be accepted into the project you must also sign the `DynamoDB SQL Library CLA`_ (Individual Contributor License Agreement).
+
+That's it! Thank you for your contribution!
+
 License
 -------
 
@@ -239,6 +250,7 @@ Documentation and other similar content are provided under `Creative Commons Att
 .. _dql: https://dql.readthedocs.org/en/latest/
 .. _DQL Queries Documentation: https://dql.readthedocs.org/en/latest/topics/queries/index.html
 .. _DSL: https://en.wikipedia.org/wiki/Domain-specific_language
+.. _DynamoDB SQL Library CLA: https://goo.gl/forms/ttduh4g7Nt
 .. _GNU Affero General Public License (AGPL-3.0): http://www.gnu.org/licenses/agpl-3.0.en.html
 .. _Keyword Documentation: https://rickypc.github.io/robotframework-dynamodbsqllibrary/doc/DynamoDBSQLLibrary.html
 .. _pip: http://pip-installer.org

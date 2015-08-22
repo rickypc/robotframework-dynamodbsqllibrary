@@ -30,7 +30,8 @@ class Query(object):
     def dynamodb_host(self, label):
         """Returns DynamoDB session endpoint URL.
 
-        :param str `label`: Session label, a case and space insensitive string.
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
 
         Examples:
         | ${var} = | DynamoDB Host | LABEL |
@@ -41,7 +42,8 @@ class Query(object):
     def dynamodb_region(self, label):
         """Returns DynamoDB session region.
 
-        :param str `label`: Session label, a case and space insensitive string.
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
 
         Examples:
         | ${var} = | DynamoDB Region | LABEL |
@@ -52,9 +54,9 @@ class Query(object):
     def list_dynamodb_tables(self, label, **kwargs):
         """Returns list of all tables on requested DynamoDB session.
 
-        :param str `label`: Session label, a case and space insensitive string.
-
-        :param int `Limit`: Maximum number of tables to return. (Default 100)
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+        - ``Limit``: Maximum number of tables to return. (Default 100)
 
         Examples:
         | @{var} = | List DynamoDB Tables | LABEL |                           |         |
@@ -72,14 +74,12 @@ class Query(object):
 
     def query_dynamodb(self, label, commands):
         """Executes the SQL-like DSL commands on requested DynamoDB session.
-
-        :param str `label`: Session label, a case and space insensitive string.
-
-        :param str `commands`: SQL-like DSL commands.
-        See https://dql.readthedocs.org/en/latest/topics/queries/index.html
-        for more information on available queries.
-
         The return value will vary based on the type of query.
+
+        Arguments:
+        - ``label``: A case and space insensitive string to identify the DynamoDB session.
+        - ``commands``: SQL-like DSL commands.
+        See [https://dql.readthedocs.org/en/latest/topics/queries/index.html|available queries].
 
         Examples:
         | ${var} = | Query DynamoDB | LABEL | DUMP SCHEMA my-table |
