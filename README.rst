@@ -245,19 +245,19 @@ This library is free software, licensed under: `GNU Affero General Public Licens
 Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License`_.
 
 .. _Amazon DynamoDB: https://aws.amazon.com/dynamodb/
-.. _CNTML: http://cntlm.sourceforge.net
-.. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://creativecommons.org/licenses/by-nc-sa/4.0/
+.. _CNTML: http://goo.gl/ukiwSO
+.. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://goo.gl/SNw73V
 .. _dql: https://dql.readthedocs.org/en/latest/
 .. _DQL Queries Documentation: https://dql.readthedocs.org/en/latest/topics/queries/index.html
 .. _DSL: https://en.wikipedia.org/wiki/Domain-specific_language
 .. _DynamoDB SQL Library CLA: https://goo.gl/forms/ttduh4g7Nt
-.. _GNU Affero General Public License (AGPL-3.0): http://www.gnu.org/licenses/agpl-3.0.en.html
+.. _GNU Affero General Public License (AGPL-3.0): http://goo.gl/LOMJeU
 .. _Keyword Documentation: https://rickypc.github.io/robotframework-dynamodbsqllibrary/doc/DynamoDBSQLLibrary.html
-.. _pip: http://pip-installer.org
-.. _Robot Framework: http://robotframework.org
-.. _Robot Framework Documentation: http://robotframework.org/robotframework/
-.. _Robot Framework installed: https://github.com/robotframework/robotframework#installation
-.. _Robot Framework User Guide: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html
+.. _pip: http://goo.gl/jlJCPE
+.. _Robot Framework: http://goo.gl/lES6WM
+.. _Robot Framework Documentation: http://goo.gl/zy53tf
+.. _Robot Framework installed: https://goo.gl/PFbWqM
+.. _Robot Framework User Guide: http://goo.gl/Q7dfPB
 .. _SQL-like: https://dql.readthedocs.org/en/latest/topics/queries/index.html
 .. |Build| image:: https://img.shields.io/travis/rickypc/robotframework-dynamodbsqllibrary.svg
     :target: https://travis-ci.org/rickypc/robotframework-dynamodbsqllibrary
@@ -278,11 +278,11 @@ Documentation and other similar content are provided under `Creative Commons Att
     :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
     :alt: Development Status
 .. |Python| image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
-    :target: https://www.python.org/downloads/
+    :target: https://goo.gl/sXzgao
     :alt: Python Version
 .. |Download| image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
     :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
     :alt: Monthly Download
 .. |License| image:: https://img.shields.io/pypi/l/robotframework-dynamodbsqllibrary.svg
-    :target: https://www.gnu.org/licenses/agpl-3.0.en.html
+    :target: http://goo.gl/LOMJeU
     :alt: License
