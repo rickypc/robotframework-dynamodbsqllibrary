@@ -244,44 +244,44 @@ This library is free software, licensed under: `GNU Affero General Public Licens
 
 Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License`_.
 
-.. _Amazon DynamoDB: https://aws.amazon.com/dynamodb/
+.. _Amazon DynamoDB: https://goo.gl/C4yE9H
 .. _CNTML: http://goo.gl/ukiwSO
 .. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://goo.gl/SNw73V
-.. _dql: https://dql.readthedocs.org/en/latest/
-.. _DQL Queries Documentation: https://dql.readthedocs.org/en/latest/topics/queries/index.html
-.. _DSL: https://en.wikipedia.org/wiki/Domain-specific_language
+.. _dql: https://goo.gl/n43Il4
+.. _DQL Queries Documentation: https://goo.gl/RRKSeK
+.. _DSL: https://goo.gl/P1fhzc
 .. _DynamoDB SQL Library CLA: https://goo.gl/forms/ttduh4g7Nt
 .. _GNU Affero General Public License (AGPL-3.0): http://goo.gl/LOMJeU
-.. _Keyword Documentation: https://rickypc.github.io/robotframework-dynamodbsqllibrary/doc/DynamoDBSQLLibrary.html
+.. _Keyword Documentation: https://goo.gl/xPJK6j
 .. _pip: http://goo.gl/jlJCPE
 .. _Robot Framework: http://goo.gl/lES6WM
 .. _Robot Framework Documentation: http://goo.gl/zy53tf
 .. _Robot Framework installed: https://goo.gl/PFbWqM
 .. _Robot Framework User Guide: http://goo.gl/Q7dfPB
-.. _SQL-like: https://dql.readthedocs.org/en/latest/topics/queries/index.html
+.. _SQL-like: https://goo.gl/RRKSeK
 .. |Build| image:: https://img.shields.io/travis/rickypc/robotframework-dynamodbsqllibrary.svg
-    :target: https://travis-ci.org/rickypc/robotframework-dynamodbsqllibrary
+    :target: https://goo.gl/vBT1y2
     :alt: Build Status
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
-    :target: https://codecov.io/github/rickypc/robotframework-dynamodbsqllibrary
+    :target: https://goo.gl/anBeKH
     :alt: Code Coverage
 .. |Grade| image:: https://img.shields.io/codacy/242f6dae492b4d168d6a4f4a9d5f1fc0.svg
-    :target: https://www.codacy.com/app/rickypc/robotframework-dynamodbsqllibrary
+    :target: https://goo.gl/XZ7Tqg
     :alt: Code Grade
 .. |Docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-    :target: https://rickypc.github.io/robotframework-dynamodbsqllibrary/doc/DynamoDBSQLLibrary.html
+    :target: https://goo.gl/xPJK6j
     :alt: Keyword Documentation
 .. |Version| image:: https://img.shields.io/pypi/v/robotframework-dynamodbsqllibrary.svg
-    :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+    :target: https://goo.gl/kOsXOU
     :alt: Package Version
 .. |Status| image:: https://img.shields.io/pypi/status/robotframework-dynamodbsqllibrary.svg
-    :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+    :target: https://goo.gl/kOsXOU
     :alt: Development Status
 .. |Python| image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
     :target: https://goo.gl/sXzgao
     :alt: Python Version
 .. |Download| image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
-    :target: https://pypi.python.org/pypi/robotframework-dynamodbsqllibrary
+    :target: https://goo.gl/kOsXOU
     :alt: Monthly Download
 .. |License| image:: https://img.shields.io/pypi/l/robotframework-dynamodbsqllibrary.svg
     :target: http://goo.gl/LOMJeU
