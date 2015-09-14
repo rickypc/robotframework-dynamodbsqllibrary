@@ -79,7 +79,7 @@ class Query(object):
         Arguments:
         - ``label``: A case and space insensitive string to identify the DynamoDB session.
         - ``commands``: SQL-like DSL commands.
-        See [https://dql.readthedocs.org/en/latest/topics/queries/index.html|available queries].
+        See [https://goo.gl/RRKSeK|available queries].
 
         Examples:
         | ${var} = | Query DynamoDB | LABEL | DUMP SCHEMA my-table |

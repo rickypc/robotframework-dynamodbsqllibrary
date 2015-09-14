@@ -28,18 +28,15 @@ __version__ = get_version()
 
 
 class DynamoDBSQLLibrary(Assertion, Query, SessionManager):
-    """DynamoDBSQLibrary is a [https://en.wikipedia.org/wiki/Big_data|big data]
-    testing library for [http://robotframework.org|Robot Framework]
-    that gives you the capability to execute scan and query operations against
-    multiple [https://aws.amazon.com/dynamodb/|Amazon DynamoDB] sessions simultaneously
-    using a [https://dql.readthedocs.org/en/latest/topics/queries/index.html|SQL-like]
-    [https://en.wikipedia.org/wiki/Domain-specific_language|DSL].
+    """DynamoDBSQLibrary is a [https://goo.gl/KlZhhW|big data] testing library for
+    [http://goo.gl/lES6WM|Robot Framework] that gives you the capability to execute
+    scan and query operations against multiple [https://goo.gl/C4yE9H|Amazon DynamoDB]
+    sessions simultaneously using a [https://goo.gl/RRKSeK|SQL-like] [https://goo.gl/P1fhzc|DSL].
 
-    It leverages [https://dql.readthedocs.org/en/latest/|DynamoDB Query Languange] (DQL)
-    internally to provide a SQL-like DSL for Amazon DynamoDB.
+    It leverages [https://goo.gl/n43Il4|DynamoDB Query Languange] (DQL) internally to
+    provide a SQL-like DSL for Amazon DynamoDB.
 
-    See [https://dql.readthedocs.org/en/latest/topics/queries/index.html|DQL queries]
-    for more information.
+    See [https://goo.gl/RRKSeK|DQL queries] for more information.
 
     Examples:
     | `Create DynamoDB Session`     | us-west-2      | label=oregon                |
