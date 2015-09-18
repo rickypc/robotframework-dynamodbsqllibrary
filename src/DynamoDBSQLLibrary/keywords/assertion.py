@@ -100,7 +100,8 @@ class Assertion(object):
 
     def json_loads(self, text):
         # pylint: disable=line-too-long
-        """Returns JSON object from JSON string with object restoration support.
+        """Returns [http://goo.gl/o0X6Pp|JSON] object from [http://goo.gl/o0X6Pp|JSON] string
+        with object restoration support.
 
         Arguments:
         - ``text``: JSON string.
@@ -124,7 +125,7 @@ class Assertion(object):
         return loads(text, object_hook=self._restore, parse_float=Decimal)
 
     def list_and_json_string_should_be_equal(self, actual, expected_text, order_by='id'):
-        """Fails if deep compare of the given list and JSON string are unequal.
+        """Fails if deep compare of the given list and [http://goo.gl/o0X6Pp|JSON] string are unequal.
 
         Arguments:
         - ``actual``: The list to be compare to JSON object from given JSON string.
