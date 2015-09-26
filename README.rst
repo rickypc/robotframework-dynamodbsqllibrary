@@ -66,7 +66,7 @@ Config and Credentials File
 Set up config file in default location:
 
 - ~/.aws/config (Linux/Mac)
-- %USERPROFILE%\.aws\config (Windows)
+- %USERPROFILE%\\.aws\\config (Windows)
 
 .. code-block:: ini
 
@@ -76,7 +76,7 @@ Set up config file in default location:
 Set up credentials file in default location:
 
 - ~/.aws/credentials (Linux/Mac)
-- %USERPROFILE%\.aws\credentials (Windows)
+- %USERPROFILE%\\.aws\\credentials (Windows)
 
 .. code-block:: ini
 
