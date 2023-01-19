@@ -26,6 +26,8 @@ from dynamo3 import DynamoDBConnection
 from dql import Engine
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ConnectionCache
+from robot.api import logger
+from robot.api.deco import keyword
 
 
 class SessionManager(object):
@@ -35,6 +37,7 @@ class SessionManager(object):
         self._builtin = BuiltIn()
         self._cache = ConnectionCache('No sessions.')
 
+    @keyword("Create DynamoDB Session")
     def create_dynamodb_session(self, *args, **kwargs):
         # pylint: disable=line-too-long
         """Create DynamoDB session object.
@@ -90,21 +93,34 @@ class SessionManager(object):
         self._cache.register(session, alias=label)
         return label
 
+    @keyword("Delete All DynamoDB Sessions")
     def delete_all_dynamodb_sessions(self):
         """Removes all DynamoDB sessions."""
         self._cache.empty_cache()
 
-    def delete_dynamodb_session(self, label):
-        """Removes DynamoDB session.
+    @keyword("Delete DynamoDB Session")
+    def delete_dynamodb_session(self, label, info_on_fail=False):
+        """Removes a labeled DynamoDB session.
 
         Arguments:
         - ``label``: A case and space insensitive string to identify the DynamoDB session.
                      (Default ``region``)
+        - ``info_on_fail``: If you want this keyword does not fail the test if the label is not found,
+                     you can pass this argument as True (Default ``False``)
 
         Examples:
         | Delete DynamoDB Session | LABEL |
+        | Delete DynamoDB Session | LABEL | info_on_fail=${True} |
         """
-        self._cache.switch(label)
+        try:
+            self._cache.switch(label)
+        except Exception as e:
+            error_msg = e.__str__()
+            if "Non-existing index or alias" in error_msg and info_on_fail is True:
+                logger.info(error_msg)
+                return
+            else:
+                raise Exception(error_msg)
         index = self._cache.current_index
         # pylint: disable=protected-access
         self._cache.current = self._cache._no_current

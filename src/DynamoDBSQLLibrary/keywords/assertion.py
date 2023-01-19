@@ -27,13 +27,14 @@ from dynamo3.exception import DynamoDBError
 from json import loads
 from operator import itemgetter
 from re import split
-# import numpy as np
+from robot.api.deco import keyword
 
 
 class Assertion(object):
     """Assertion keywords for DynamoDB operations."""
 
     @staticmethod
+    @keyword("DynamoDB Dumps Should Be Equal")
     def dynamodb_dumps_should_be_equal(dump1, dump2):
         # pylint: disable=line-too-long
         """Validate if the given operands are equal.
@@ -45,7 +46,7 @@ class Assertion(object):
 
         Examples:
         | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump1 (bar NUMBER RANGE KEY,id STRING HASH KEY) | # PASS |
-        | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump1 (id STRING HASH KEY)                          | # FAIL |
+        | DynamoDB Dumps Should Be Equal | LABEL | CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY) | CREATE TABLE dump1 (id STRING HASH KEY) | # FAIL |
         """
         # pylint: disable=line-too-long
         dumps1 = sorted([i.strip() for i in split("[(),]", dump1) if i])
@@ -53,6 +54,7 @@ class Assertion(object):
         if dumps1 != dumps2:
             raise AssertionError("DynamoDBSQLLibraryError: Table schema dumps are different")
 
+    @keyword("DynamoDB Table Should Exist")
     def dynamodb_table_should_exist(self, label, table_name):
         """Validates if the given ``table_name`` exists in the requested DynamoDB session.
 
@@ -75,6 +77,7 @@ class Assertion(object):
             else:
                 raise
 
+    @keyword("DynamoDB Table Should Not Exist")
     def dynamodb_table_should_not_exist(self, label, table_name):
         """Validates if the given ``table_name`` does not exist in the requested DynamoDB session.
 
@@ -98,6 +101,7 @@ class Assertion(object):
             else:
                 raise
 
+    @keyword("Json Loads")
     def json_loads(self, text):
         # pylint: disable=line-too-long
         """Returns [http://goo.gl/o0X6Pp|JSON] object from [http://goo.gl/o0X6Pp|JSON] string
@@ -124,14 +128,15 @@ class Assertion(object):
         # pylint: disable=line-too-long
         return loads(text, object_hook=self._restore, parse_float=Decimal)
 
+    @keyword("List And Json String Should Be Equal")
     def list_and_json_string_should_be_equal(self, actual, expected_text, order_by='id'):
         """Fails if deep compare of the given list and [http://goo.gl/o0X6Pp|JSON] string are unequal.
 
         Arguments:
-        - ``actual``: The list to be compare to JSON object from given JSON string.
-        - ``expected_text``: The JSON string to be compare to the given list.
+        - ``actual``: The list to be compared to JSON object from given JSON string.
+        - ``expected_text``: The JSON string to be compared to the given list.
                              Please see ``JSON Loads`` for more details.
-        - ``order_by``: The key to be use to sort the list. (Default 'id')
+        - ``order_by``: The key to be used to sort the list. (Default 'id')
 
         Examples:
         | ${dict} = | Create Dictionary | id | 1 | key | value |
@@ -141,25 +146,26 @@ class Assertion(object):
         expected = self.json_loads(expected_text)
         self.lists_deep_compare_should_be_equal(actual, expected, order_by)
 
-    @staticmethod
-    def lists_deep_compare(list1, list2, order_by='id'):
+    @keyword("Lists Deep Compare")
+    def lists_deep_compare(self, list1, list2, order_by='id'):
         """Returns deep compare results of the given lists.
 
         Arguments:
-        - ``list1``: The first list to be compare to second list.
-        - ``list2``: The second list to be compare to first list.
-        - ``order_by``: The key to be use to sort the list. (Default 'id')
+        - ``list1``: The first list to be compared to second list.
+        - ``list2``: The second list to be compared to first list.
+        - ``order_by``: The key to be used to sort the list. (Default 'id')
 
         Examples:
         | ${dict1} = | Create Dictionary | id | 1 | key | value |
         | ${dict2} = | Create Dictionary | id | 1 | key | value |
         | @{list1} = | Create List | ${dict1} |
         | @{list2} = | Create List | ${dict2} |
-        | ${var} = | Lists Deep Compare | ${list1} | ${list2} | # 0 |
+        | ${var} = | Lists Deep Compare | ${list1} | ${list2} |
         """
         list1, list2 = [sorted(l, key=itemgetter(order_by)) for l in (list1, list2)]
-        return cmp(list1, list2)
+        return Assertion._cmp(list1, list2)
 
+    @keyword("Lists Deep Compare Should Be Equal")
     def lists_deep_compare_should_be_equal(self, list1, list2, order_by='id'):
         """Fails if deep compare of the given lists are unequal.
 
@@ -197,3 +203,7 @@ class Assertion(object):
         if "py/collections.OrderedDict" in dct:
             return OrderedDict(dct["py/collections.OrderedDict"])
         return dct
+
+    @staticmethod
+    def _cmp(a, b):
+        return (a > b) - (a < b)
