@@ -6,7 +6,7 @@ Amazon AWS DynamoDB big data testing library for Robot Framework
 Introduction
 ------------
 
-DynamoDBSQLibrary is a big data testing library for `Robot Framework`_
+DynamoDB SQL Library is a big data testing library for `Robot Framework`_
 that gives you the capability to execute scan and query operations against
 multi `Amazon DynamoDB`_ sessions simultaneously using a `SQL-like`_ DSL_.
 
@@ -199,8 +199,8 @@ test/
 Usage
 -----
 
-To write tests with Robot Framework and DynamoDBSQLLibrary,
-DynamoDBSQLLibrary must be imported into your Robot test suite.
+To write tests with Robot Framework and DynamoDB SQL Library,
+DynamoDB SQL Library must be imported into your Robot test suite.
 See `Robot Framework User Guide`_ for more information.
 
 More information about Robot Framework standard libraries and built-in tools
@@ -227,24 +227,25 @@ Test the testing library, talking about dogfooding, let's run:
 Contributing
 ------------
 
-If you would like to contribute code to DynamoDB SQL Library project you can do so through GitHub by forking the repository and sending a pull request.
+If you would like to contribute code to DynamoDB SQL Library repository, you can do so through GitHub by forking the repository and sending a pull request.
+
+If you do not agree to `Contribution Agreement`_, do not contribute any code to DynamoDB SQL Library repository.
 
 When submitting code, please make every effort to follow existing conventions and style in order to keep the code as readable as possible. Please also include appropriate test cases.
-
-Before your code can be accepted into the project you must also sign the `DynamoDB SQL Library CLA`_ (Individual Contributor License Agreement).
 
 That's it! Thank you for your contribution!
 
 License
 -------
 
-Copyright (c) 2014 - 2015 Richard Huang.
+Copyright (c) 2014 - 2023 Richard Huang.
 
 This library is free software, licensed under: `GNU Affero General Public License (AGPL-3.0)`_.
 
 Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License`_.
 
 .. _Amazon DynamoDB: https://goo.gl/C4yE9H
+.. _Contribution Agreement: CONTRIBUTING.md 
 .. _CNTML: http://goo.gl/ukiwSO
 .. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://goo.gl/SNw73V
 .. _dql: https://goo.gl/n43Il4
