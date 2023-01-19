@@ -26,10 +26,10 @@ import codecs
 from os.path import abspath, dirname, join
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
+from src.DynamoDBSQLLibrary.version import VERSION
 
 LIBRARY_NAME = 'DynamoDBSQLLibrary'
 CWD = abspath(dirname(__file__))
-execfile(join(CWD, 'src', LIBRARY_NAME, 'version.py'))
 
 with codecs.open(join(CWD, 'README.rst'), encoding='utf-8') as reader:
     LONG_DESCRIPTION = reader.read()

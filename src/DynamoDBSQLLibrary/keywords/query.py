@@ -22,11 +22,13 @@ Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like D
 """
 
 from dynamo3.result import ResultSet
+from robot.api.deco import keyword
 
 
 class Query(object):
     """Query keywords for DynamoDB scan and query operations."""
 
+    @keyword("DynamoDB Host")
     def dynamodb_host(self, label):
         """Returns DynamoDB session endpoint URL.
 
@@ -39,6 +41,7 @@ class Query(object):
         # pylint: disable=no-member
         return self._cache.switch(label).connection.host
 
+    @keyword("DynamoDB Region")
     def dynamodb_region(self, label):
         """Returns DynamoDB session region.
 
@@ -51,6 +54,7 @@ class Query(object):
         # pylint: disable=no-member
         return self._cache.switch(label).connection.region
 
+    @keyword("List DynamoDB Tables")
     def list_dynamodb_tables(self, label, **kwargs):
         """Returns list of all tables on requested DynamoDB session.
 
@@ -72,6 +76,7 @@ class Query(object):
         self._builtin.log("List tables response:\n%s" % response, 'DEBUG')
         return response
 
+    @keyword("Query DynamoDB")
     def query_dynamodb(self, label, commands):
         """Executes the SQL-like DSL commands on requested DynamoDB session.
         The return value will vary based on the type of query.

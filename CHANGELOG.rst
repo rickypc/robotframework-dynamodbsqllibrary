@@ -1,3 +1,9 @@
+0.3.0 (2023.01.19)
+===================
+* Add compatibility for Python 3
+* Add new arg for ``Delete DynamoDB Session`` keyword
+* Update documentation
+
 0.2.1 (2015.08.21)
 ==================
 
