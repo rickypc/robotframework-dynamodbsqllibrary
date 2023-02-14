@@ -1,7 +1,7 @@
 Amazon AWS DynamoDB big data testing library for Robot Framework
 ================================================================
 
-|Build| |Coverage| |Grade| |Docs| |Version| |Status| |Python| |Download| |License|
+|Build| |Coverage| |Docs| |Version| |Status| |Python| |Download| |License|
 
 Introduction
 ------------
@@ -252,7 +252,7 @@ Documentation and other similar content are provided under `Creative Commons Att
 .. _DSL: https://goo.gl/P1fhzc
 .. _DynamoDB SQL Library CLA: https://goo.gl/forms/ttduh4g7Nt
 .. _GNU Affero General Public License (AGPL-3.0): http://goo.gl/LOMJeU
-.. _Keyword Documentation: https://goo.gl/xPJK6j
+.. _Keyword Documentation: https://tinyurl.com/3wvj3ees
 .. _pip: http://goo.gl/jlJCPE
 .. _Robot Framework: http://goo.gl/lES6WM
 .. _Robot Framework Documentation: http://goo.gl/zy53tf
@@ -265,9 +265,6 @@ Documentation and other similar content are provided under `Creative Commons Att
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
     :target: https://goo.gl/anBeKH
     :alt: Code Coverage
-.. |Grade| image:: https://img.shields.io/codacy/242f6dae492b4d168d6a4f4a9d5f1fc0.svg
-    :target: https://goo.gl/XZ7Tqg
-    :alt: Code Grade
 .. |Docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
     :target: https://goo.gl/xPJK6j
     :alt: Keyword Documentation
@@ -277,7 +274,7 @@ Documentation and other similar content are provided under `Creative Commons Att
 .. |Status| image:: https://img.shields.io/pypi/status/robotframework-dynamodbsqllibrary.svg
     :target: https://goo.gl/kOsXOU
     :alt: Development Status
-.. |Python| image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
+.. |Python| image:: https://img.shields.io/badge/python-3.9-blue.svg
     :target: https://goo.gl/sXzgao
     :alt: Python Version
 .. |Download| image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
