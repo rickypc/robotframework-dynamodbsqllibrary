@@ -4,7 +4,6 @@ __pycache__/
 *.egg-info
 .coverage
 bin
-dist
 htmlcov
 test-results
 .idea/
