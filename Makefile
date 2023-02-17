@@ -1,5 +1,5 @@
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -60,8 +60,8 @@ version:
 	python -m robot.libdoc src/$(LIBRARY_NAME) version
 
 install_devel_deps:
-	pip install -e .
-	pip install coverage mock
+	python -m pip install -e .
+	python -m pip install coverage mock
 	mkdir -p ~/.aws
 	[ -f ~/.aws/config ] && mv ~/.aws/config ~/.aws/config.bak || true
 	[ -f ~/.aws/credentials ] && mv ~/.aws/credentials ~/.aws/credentials.bak || true
@@ -96,7 +96,7 @@ lint:clean
 test:test_unit test_acceptance
 
 test_acceptance: run
-	pybot -L DEBUG -d test/test-results test/atest/suites/ && { kill `cat $<` && rm $<; } || \
+	python -m robot -L DEBUG -d test/test-results test/atest/suites/ && { kill `cat $<` && rm $<; } || \
 	{ kill `cat $<` && rm $<; exit 1; }
 
 test_unit:
