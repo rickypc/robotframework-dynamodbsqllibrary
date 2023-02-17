@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  - "3.9"
 before_install:
   pip install codecov
 install: make install_devel_deps
