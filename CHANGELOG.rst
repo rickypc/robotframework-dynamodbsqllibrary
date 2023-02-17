@@ -1,3 +1,13 @@
+0.3.1 (2023.02.17)
+==================
+* Fix Python 3 compatibility
+* Add JSON Binary decoding support
+* Add JSON Decimal encoding support
+* Add JSON deep equality comparison as a fallback
+* Unit test and acceptance test adjustments
+* Follow linter suggestions
+* Update documentation
+
 0.3.0 (2023.01.19)
 ===================
 * Add compatibility for Python 3
@@ -25,7 +35,7 @@
 0.1.1 (2015.08.01)
 ==================
 
-* Add `DynamoDB Host`, `DynamoDB Region`, and `List DynamoDB Tables` keywords.
+* Add ``DynamoDB Host``, ``DynamoDB Region``, and ``List DynamoDB Tables`` keywords.
 * Add unit and acceptance tests
 * Update make file
 
