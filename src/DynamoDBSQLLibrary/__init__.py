@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# pylint: disable=invalid-name
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 #    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
@@ -21,8 +22,8 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
-from src.DynamoDBSQLLibrary.keywords import Assertion, Query, SessionManager
-from src.DynamoDBSQLLibrary.version import get_version
+from DynamoDBSQLLibrary.keywords import Assertion, Query, SessionManager
+from DynamoDBSQLLibrary.version import get_version
 
 __version__ = get_version()
 
