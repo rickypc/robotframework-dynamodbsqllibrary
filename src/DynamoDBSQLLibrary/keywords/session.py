@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,20 +22,19 @@ Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like D
 """
 
 from boto3.session import Session
-from dynamo3 import DynamoDBConnection
 from dql import Engine
-from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import ConnectionCache
+from dynamo3 import DynamoDBConnection
 from robot.api import logger
 from robot.api.deco import keyword
+from robot.utils import ConnectionCache
 
 
-class SessionManager(object):
+class SessionManager():
     """Session manager keywords for DynamoDB operations."""
 
     def __init__(self):
-        self._builtin = BuiltIn()
         self._cache = ConnectionCache('No sessions.')
+        self._logger = logger
 
     @keyword("Create DynamoDB Session")
     def create_dynamodb_session(self, *args, **kwargs):
@@ -89,7 +88,7 @@ class SessionManager(object):
         if label is None:
             label = session.connection.region
         # pylint: disable=protected-access
-        self._builtin.log('Creating DynamoDB session: %s' % label, 'DEBUG')
+        self._logger.debug(f'Creating DynamoDB session: {label}')
         self._cache.register(session, alias=label)
         return label
 
@@ -105,8 +104,8 @@ class SessionManager(object):
         Arguments:
         - ``label``: A case and space insensitive string to identify the DynamoDB session.
                      (Default ``region``)
-        - ``info_on_fail``: If you want this keyword does not fail the test if the label is not found,
-                     you can pass this argument as True (Default ``False``)
+        - ``info_on_fail``: If you want this keyword does not fail the test if the label
+                     is not found, you can pass this argument as True (Default ``False``)
 
         Examples:
         | Delete DynamoDB Session | LABEL |
@@ -114,20 +113,21 @@ class SessionManager(object):
         """
         try:
             self._cache.switch(label)
-        except Exception as e:
-            error_msg = e.__str__()
-            if "Non-existing index or alias" in error_msg and info_on_fail is True:
-                logger.info(error_msg)
+        # pylint: disable-next=broad-exception-caught
+        except Exception as ex:
+            error_msg = str(ex)
+            if 'Non-existing index or alias' in error_msg and info_on_fail:
+                self._logger.info(error_msg)
                 return
-            else:
-                raise Exception(error_msg)
+            # pylint: disable-next=broad-exception-raised,raise-missing-from
+            raise Exception(error_msg)
         index = self._cache.current_index
         # pylint: disable=protected-access
         self._cache.current = self._cache._no_current
         # pylint: disable=protected-access
         self._cache._connections[index - 1] = None
         # pylint: disable=protected-access
-        self._cache._aliases['x-%s-x' % label] = self._cache._aliases.pop(label)
+        self._cache._aliases[f'x-{label}-x'] = self._cache._aliases.pop(label)
 
     def _get_client(self, session, **kwargs):
         """Returns boto3 client session object."""
@@ -170,7 +170,7 @@ class SessionManager(object):
         url = None
         if host is not None:
             protocol = 'https' if is_secure else 'http'
-            url = '%s://%s' % (protocol, host)
+            url = f'{protocol}://{host}'
             if port is not None:
-                url += ':%d' % int(port)
+                url += f':{int(port)}'
         return url
