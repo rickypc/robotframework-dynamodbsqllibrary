@@ -1,9 +1,0 @@
-language: python
-python:
-  - "3.9"
-before_install:
-  pip install codecov
-install: make install_devel_deps
-script: make test
-after_success:
-  codecov
