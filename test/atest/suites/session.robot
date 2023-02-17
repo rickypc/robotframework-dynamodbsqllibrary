@@ -1,5 +1,5 @@
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -150,13 +150,13 @@ Provision Session Table
     DynamoDB Table Should Exist  ${label}  session
     ${response} =  Query DynamoDB  ${label}
     ...  INSERT INTO session (id, bar) VALUES ('${label}', 1), ('${label}', 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
 
 Session Table Should Be
     [Arguments]  ${label}  ${total}  ${expected}
     [Documentation]  Validate session table should match expected
     DynamoDB Table Should Exist  ${label}  session
-    @{actual} =  Query DynamoDB  ${label}  SCAN session
+    @{actual} =  Query DynamoDB  ${label}  SCAN * FROM session
     Length Should Be  ${actual}  ${total}
     List And JSON String Should Be Equal  ${actual}  ${expected}
 

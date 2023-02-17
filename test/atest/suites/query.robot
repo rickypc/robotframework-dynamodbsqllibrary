@@ -1,5 +1,5 @@
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -39,7 +39,7 @@ Alter Throughput Partially
     [Documentation]  Can alter table throughput partially on read or write only
     Query DynamoDB  ${LABEL}
     ...  CREATE TABLE throughput-partial (id STRING HASH KEY, THROUGHPUT (1, 1))
-    Query DynamoDB  ${LABEL}  ALTER TABLE throughput-partial SET THROUGHPUT (2, 0)
+    Query DynamoDB  ${LABEL}  ALTER TABLE throughput-partial SET THROUGHPUT (2, 1)
     ${actual} =  Query DynamoDB  ${LABEL}  DUMP SCHEMA throughput-partial
     ${expected} =  Set Variable
     ...  CREATE TABLE throughput-partial (id STRING HASH KEY, THROUGHPUT (2, 1));
@@ -65,8 +65,7 @@ Alter Index Throughput
     Query DynamoDB  ${LABEL}  ALTER TABLE throughput-index SET INDEX foo_index THROUGHPUT (2, 2)
     ${actual} =  Query DynamoDB  ${LABEL}  DUMP SCHEMA throughput-index
     ${expected} =  Catenate  CREATE TABLE throughput-index
-    ...  (id STRING HASH KEY, foo NUMBER, THROUGHPUT (5, 5))
-    ...  GLOBAL ALL INDEX ('foo_index', foo, THROUGHPUT (2, 2));
+    ...  (id STRING HASH KEY, foo NUMBER, THROUGHPUT (0, 0))GLOBAL ALL INDEX ('foo_index', foo, THROUGHPUT (2, 2));
     Should Be Equal  ${actual}  ${expected}
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS throughput-index
 
@@ -89,21 +88,22 @@ Insert Multi Rows
     [Documentation]  Can insert multi rows at once
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO foobar (id, bar) VALUES ('a', 1), ('b', 1)
-    Should Be Equal  ${response}  Inserted 2 items
-    @{actual} =  Query DynamoDB  ${LABEL}  SCAN foobar
+    Should Be Equal As Strings  ${response}  2
+    @{actual} =  Query DynamoDB  ${LABEL}  SCAN * FROM foobar
     Length Should Be  ${actual}  2
     ${expected} =  Set Variable  [{"id":"a","bar":1},{"id":"b","bar":1}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
+    Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS foobar
 
 Insert Binary Hash Key
     [Documentation]  Can insert binary hash key
     Query DynamoDB  ${LABEL}  CREATE TABLE binary (id BINARY HASH KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO binary (id) VALUES (b'a')
-    Should Be Equal  ${response}  Inserted 1 items
-    @{actual} =  Query DynamoDB  ${LABEL}  SCAN binary
+    Should Be Equal As Strings  ${response}  1
+    @{actual} =  Query DynamoDB  ${LABEL}  SCAN * FROM binary
     Length Should Be  ${actual}  1
-    ${expected} =  Set Variable  [{"id":"a"}]
+    ${expected} =  Set Variable  [{"id":{"py/boto3.dynamodb.types.Binary":"a"}}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS binary
 
@@ -112,9 +112,9 @@ Count Rows
     Query DynamoDB  ${LABEL}  CREATE TABLE count (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO count (id, bar) VALUES ('a', 1), ('a', 2)
-    Should Be Equal  ${response}  Inserted 2 items
-    ${actual} =  Query DynamoDB  ${LABEL}  COUNT count WHERE id='a'
-    Should Be Equal  '${actual}'  '2'
+    Should Be Equal As Strings  ${response}  2
+    ${actual} =  Query DynamoDB  ${LABEL}  SELECT count(*) FROM count WHERE id='a'
+    Should Be Equal  '${actual}'  'Count(2)'
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS count
 
 Count Smart Index
@@ -123,9 +123,9 @@ Count Smart Index
     ...  CREATE TABLE smart (id STRING HASH KEY, bar NUMBER RANGE KEY, ts NUMBER INDEX('ts-index'))
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO smart (id, bar, ts) VALUES ('a', 1, 100), ('a', 2, 200)
-    Should Be Equal  ${response}  Inserted 2 items
-    ${actual} =  Query DynamoDB  ${LABEL}  COUNT smart WHERE id='a' AND ts < 150
-    Should Be Equal  '${actual}'  '1'
+    Should Be Equal As Strings  ${response}  2
+    ${actual} =  Query DynamoDB  ${LABEL}  SELECT count(*) FROM smart WHERE id='a' AND ts < 150
+    Should Be Equal  '${actual}'  'Count(1)'
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS smart
 
 Count Filter
@@ -134,9 +134,9 @@ Count Filter
     ...  CREATE TABLE filter (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO filter (id, foo, bar) VALUES ('a', 1, 1), ('a', 2, 2)
-    Should Be Equal  ${response}  Inserted 2 items
-    ${actual} =  Query DynamoDB  ${LABEL}  COUNT filter WHERE id='a' FILTER foo=1
-    Should Be Equal  '${actual}'  '1'
+    Should Be Equal As Strings  ${response}  2
+    ${actual} =  Query DynamoDB  ${LABEL}  SELECT count(*) FROM filter WHERE id='a' AND foo=1
+    Should Be Equal  '${actual}'  'Count(1)'
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS filter
 
 Delete From Table
@@ -146,9 +146,9 @@ Delete From Table
     Query DynamoDB  ${LABEL}  ${commands}
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO delete-table (id, bar) VALUES ('a', 1), ('b', 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     Query DynamoDB  ${LABEL}  DELETE FROM delete-table WHERE id='a' AND bar=1
-    @{actual} =  Query DynamoDB  ${LABEL}  SCAN delete-table
+    @{actual} =  Query DynamoDB  ${LABEL}  SCAN * FROM delete-table
     ${expected} =  Set Variable  [{"id":"b","bar":2}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS delete-table
@@ -160,9 +160,9 @@ Delete From Table With KEYS IN Filter
     Query DynamoDB  ${LABEL}  ${commands}
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO delete-table-in (id, bar) VALUES ('a', 1), ('b', 2)
-    Should Be Equal  ${response}  Inserted 2 items
-    Query DynamoDB  ${LABEL}  DELETE FROM delete-table-in WHERE KEYS IN ('a', 1)
-    @{actual} =  Query DynamoDB  ${LABEL}  SCAN delete-table-in
+    Should Be Equal As Strings  ${response}  2
+    Query DynamoDB  ${LABEL}  DELETE FROM delete-table-in KEYS IN ('a', 1)
+    @{actual} =  Query DynamoDB  ${LABEL}  SCAN * FROM delete-table-in
     ${expected} =  Set Variable  [{"id":"b","bar":2}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS delete-table-in
@@ -174,9 +174,9 @@ Delete From Table With Smart Index
     Query DynamoDB  ${LABEL}  ${commands}
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO delete-table-index (id, bar, ts) VALUES ('a', 1, 100), ('a', 2, 200)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     Query DynamoDB  ${LABEL}  DELETE FROM delete-table-index WHERE id='a' AND ts > 150
-    @{actual} =  Query DynamoDB  ${LABEL}  SCAN delete-table-index
+    @{actual} =  Query DynamoDB  ${LABEL}  SCAN * FROM delete-table-index
     ${expected} =  Set Variable  [{"id":"a","bar":1,"ts":100}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS delete-table-index
@@ -188,9 +188,9 @@ Delete From Table Using Specific Index
     Query DynamoDB  ${LABEL}  ${commands}
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO delete-table-using (id, bar, ts) VALUES ('a', 1, 100), ('a', 2, 200)
-    Should Be Equal  ${response}  Inserted 2 items
-    Query DynamoDB  ${LABEL}  DELETE FROM delete-table-using WHERE id='a' AND ts > 150 USING 'ts-index'
-    @{actual} =  Query DynamoDB  ${LABEL}  SCAN delete-table-using
+    Should Be Equal As Strings  ${response}  2
+    Query DynamoDB  ${LABEL}  DELETE FROM delete-table-using WHERE id='a' AND ts > 150 USING ts-index
+    @{actual} =  Query DynamoDB  ${LABEL}  SCAN * FROM delete-table-using
     ${expected} =  Set Variable  [{"id":"a","bar":1,"ts":100}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS delete-table-using
@@ -201,7 +201,7 @@ Dump Schema
     ...  ts NUMBER INDEX('ts-index'), baz STRING KEYS INDEX('baz-index'),
     ...  bag NUMBER INCLUDE INDEX('bag-index', ['foo']), THROUGHPUT (2, 6))
     ...  GLOBAL INDEX ('my-index', bar, baz, THROUGHPUT (1, 2))
-    ...  GLOBAL KEYS INDEX ('my-keys', id)
+    ...  GLOBAL KEYS INDEX ('my-keys', id, THROUGHPUT (1, 2))
     Query DynamoDB  ${LABEL}  ${commands}
     ${actual} =  Query DynamoDB  ${LABEL}  DUMP SCHEMA dump
     Query DynamoDB  ${LABEL}  DROP TABLE dump
@@ -214,10 +214,11 @@ Multiple Statements
     [Documentation]  Can execute multiple statements separated by ';'
     ${commands} =  Catenate  CREATE TABLE multiple (id STRING HASH KEY);
     ...  INSERT INTO multiple (id, foo) VALUES ('a', 1), ('b', 2);
-    ...  SCAN multiple
+    ...  SCAN * FROM multiple
     @{actual} =  Query DynamoDB  ${LABEL}  ${commands}
     ${expected} =  Set Variable  [{"id":"a","foo":1},{"id":"b","foo":2}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
+    Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS multiple
 
 Get Session Host
     [Documentation]  Can get session host endpoint URL
@@ -238,3 +239,5 @@ List Tables
     ${expected} =  Set Variable  ["something1"]
     ${order_number} =  Convert To Integer  0
     List And JSON String Should Be Equal  ${actual}  ${expected}  ${order_number}
+    Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS something1
+    Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS thing1

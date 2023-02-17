@@ -1,5 +1,5 @@
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,7 +22,7 @@ Return Value Should Be
     [Arguments]  ${commands}  ${message}  ${filter}  ${expected}
     ...  ${name}=foobar  ${label}=local  ${key}=id
     ${response} =  Query DynamoDB  ${label}  ${commands}
-    Should Be Equal  ${response}  ${message}
+    Should Be Equal As Strings  ${response}  ${message}
     @{actual} =  Query DynamoDB  ${label}
     ...  SELECT * FROM ${name} WHERE ${key}='${filter}'
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -46,7 +46,7 @@ Suite Prepare
     Run Keyword If  '${label}' == '${EMPTY}'  Create DynamoDB Session  ${REGION}
     ...  host=${host}  port=${port_number}  access_key=key  secret_key=secret
     ...  is_secure=${is_secure}
-    Run Keyword Unless  '${label}' == '${EMPTY}'  Create DynamoDB Session  ${REGION}
+    Run Keyword If  '${label}' != '${EMPTY}'  Create DynamoDB Session  ${REGION}
     ...  host=${host}  port=${port_number}  access_key=key  secret_key=secret
     ...  is_secure=${is_secure}  label=${label}
 

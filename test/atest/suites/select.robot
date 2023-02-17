@@ -1,5 +1,5 @@
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -28,7 +28,7 @@ Select Hash Key
     [Documentation]  Can select with filter by hash key
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO foobar (id, bar) VALUES ('a', 1), ('b', 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM foobar WHERE id='a'
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","bar":1}]
@@ -39,7 +39,7 @@ Select Hash And Range Keys
     Query DynamoDB  ${LABEL}  CREATE TABLE range (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO range (id, bar) VALUES ('a', 1), ('b', 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM range WHERE id='a' AND bar=1
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","bar":1}]
@@ -50,8 +50,8 @@ Select Keys In
     [Documentation]  Can fetch items directly with KEYS IN
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO foobar (id, bar) VALUES ('e', 1), ('f', 2)
-    Should Be Equal  ${response}  Inserted 2 items
-    @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM foobar WHERE KEYS IN ('e', 1), ('f', 2)
+    Should Be Equal As Strings  ${response}  2
+    @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM foobar KEYS IN ('e', 1), ('f', 2)
     Length Should Be  ${actual}  2
     ${expected} =  Set Variable  [{"id":"e","bar":1},{"id":"f","bar":2}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -61,7 +61,7 @@ Select With Reverse Order
     Query DynamoDB  ${LABEL}  CREATE TABLE reverse (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO reverse (id, bar) VALUES ('a', 1), ('a', 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual_asc} =  Query DynamoDB  ${LABEL}  SELECT * FROM reverse WHERE id='a' ASC
     @{actual_desc} =  Query DynamoDB  ${LABEL}  SELECT * FROM reverse WHERE id='a' DESC
     Length Should Be  ${actual_asc}  2
@@ -78,9 +78,9 @@ Select Hash Index
     ...  CREATE TABLE indexes (id STRING HASH KEY, bar NUMBER RANGE KEY, ts NUMBER INDEX('ts-index'))
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO indexes (id, bar, ts) VALUES ('a', 1, 100), ('a', 2, 200)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM indexes WHERE id='a' AND ts < 150 USING 'ts-index'
+    ...  SELECT * FROM indexes WHERE id = 'a' AND ts < 150 USING ts-index
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","bar":1,"ts":100}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -92,7 +92,7 @@ Select Smart Index
     ...  CREATE TABLE smart-index (id STRING HASH KEY, bar NUMBER RANGE KEY, ts NUMBER INDEX('ts-index'))
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO smart-index (id, bar, ts) VALUES ('a', 1, 100), ('a', 2, 200)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
     ...  SELECT * FROM smart-index WHERE id='a' AND ts < 150
     Length Should Be  ${actual}  1
@@ -108,7 +108,7 @@ Select Smart Global Index
     Query DynamoDB  ${LABEL}  ${commands}
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO smart-global (id, foo, bar, baz) VALUES ('a', 'a', 1, 'a'), ('b', 'b', 2, 'b')
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM smart-global WHERE baz='a'
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","foo":"a","bar":1,"baz":"a"}]
@@ -121,8 +121,8 @@ Select Limit
     ...  CREATE TABLE limit (id STRING HASH KEY, bar NUMBER RANGE KEY, ts NUMBER INDEX('ts-index'))
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO limit (id, bar, ts) VALUES ('a', 1, 100), ('a', 2, 200)
-    Should Be Equal  ${response}  Inserted 2 items
-    @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM limit WHERE id='a' LIMIT 1
+    Should Be Equal As Strings  ${response}  2
+    @{actual} =  Query DynamoDB  ${LABEL}  SELECT * FROM limit WHERE id='a' USING ts-index LIMIT 1
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","bar":1,"ts":100}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -134,7 +134,7 @@ Select Attributes
     ...  CREATE TABLE attributes (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO attributes (id, bar, order) VALUES ('a', 1, 'first'), ('a', 2, 'second')
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
     ...  SELECT order FROM attributes WHERE id='a' AND bar=1
     Length Should Be  ${actual}  1
@@ -148,9 +148,9 @@ Select Begins With
     ...  CREATE TABLE begins-with (id NUMBER HASH KEY, bar STRING RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO begins-with (id, bar) VALUES (1, 'abc'), (1, 'def')
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM begins-with WHERE id=1 AND bar BEGINS WITH 'a'
+    ...  SELECT * FROM begins-with WHERE id=1 AND begins_with(bar, 'a')
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":1,"bar":"abc"}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -162,9 +162,9 @@ Select Between
     ...  CREATE TABLE between (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO between (id, bar) VALUES ('a', 5), ('a', 10)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM between WHERE id='a' AND bar BETWEEN (1, 8)
+    ...  SELECT * FROM between WHERE id='a' AND bar BETWEEN 1 AND 8
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","bar":5}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -176,9 +176,9 @@ Select Filter
     ...  CREATE TABLE filter (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO filter (id, bar, baz) VALUES ('a', 1, 1), ('a', 2, 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM filter WHERE id='a' FILTER baz=1
+    ...  SELECT * FROM filter WHERE id='a' AND baz=1
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","bar":1,"baz":1}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -190,9 +190,9 @@ Select And Filter
     ...  CREATE TABLE filter-and (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO filter-and (id, foo, bar, baz) VALUES ('a', 1, 1, 1), ('a', 2, 2, 1)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM filter-and WHERE id='a' FILTER baz=1 AND foo=1
+    ...  SELECT * FROM filter-and WHERE id='a' AND baz=1 AND foo=1
     Length Should Be  ${actual}  1
     ${expected} =  Set Variable  [{"id":"a","foo":1,"bar":1,"baz":1}]
     List And JSON String Should Be Equal  ${actual}  ${expected}
@@ -204,9 +204,9 @@ Select Or Filter
     ...  CREATE TABLE filter-or (id STRING HASH KEY, bar NUMBER RANGE KEY)
     ${response} =  Query DynamoDB  ${LABEL}
     ...  INSERT INTO filter-or (id, foo, bar, baz) VALUES ('a', 1, 1, 1), ('a', 2, 2, 2)
-    Should Be Equal  ${response}  Inserted 2 items
+    Should Be Equal As Strings  ${response}  2
     @{actual} =  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM filter-or WHERE id='a' FILTER baz=1 OR foo=2
+    ...  SELECT * FROM filter-or WHERE id='a' AND (baz=1 OR foo=2)
     Length Should Be  ${actual}  2
     ${expected} =  Set Variable
     ...  [{"id":"a","foo":1,"bar":1,"baz":1},{"id":"a","foo":2,"bar":2,"baz":2}]
@@ -214,7 +214,16 @@ Select Or Filter
     Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS filter-or
 
 Select Same Key Filter
-    [Documentation]  Can not filter on the same key twice
-    ${expected} =  Set Variable  SyntaxError: Cannot use a field more than once in a FILTER clause
-    Run Keyword And Expect Error  ${expected}  Query DynamoDB  ${LABEL}
-    ...  SELECT * FROM foobar WHERE id='a' FILTER foo=1 OR foo=2
+    [Documentation]  Can select on the same key twice
+    Query DynamoDB  ${LABEL}
+    ...  CREATE TABLE filter-same (id STRING HASH KEY, bar NUMBER RANGE KEY)
+    ${response} =  Query DynamoDB  ${LABEL}
+    ...  INSERT INTO filter-same (id, foo, bar, baz) VALUES ('a', 1, 1, 1), ('a', 2, 2, 2)
+    Should Be Equal As Strings  ${response}  2
+    @{actual} =  Query DynamoDB  ${LABEL}
+    ...  SELECT * FROM filter-same WHERE id='a' AND (foo=1 OR foo=2)
+    Length Should Be  ${actual}  2
+    ${expected} =  Set Variable
+    ...  [{"id":"a","foo":1,"bar":1,"baz":1},{"id":"a","foo":2,"bar":2,"baz":2}]
+    List And JSON String Should Be Equal  ${actual}  ${expected}
+    Query DynamoDB  ${LABEL}  DROP TABLE IF EXISTS filter-same
