@@ -91,7 +91,7 @@ endif
 
 lint:clean
 	flake8 --max-complexity 10
-	pylint --rcfile=setup.cfg src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py
+	pylint --rcfile=setup.cfg src/$(LIBRARY_NAME)/*.py src/$(LIBRARY_NAME)/keywords/*.py *.py
 
 test:test_unit test_acceptance
 
