@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -21,13 +21,13 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
+import mock
+import unittest
 from dql import Engine
 from dynamo3.result import ResultSet
 from sys import path
 path.append('src')
-from DynamoDBSQLLibrary.keywords import Query
-import mock
-import unittest
+from DynamoDBSQLLibrary.keywords import Query  # noqa: E402
 
 
 class QueryTests(unittest.TestCase):
@@ -39,8 +39,8 @@ class QueryTests(unittest.TestCase):
         self.engine = mock.create_autospec(Engine)
         self.label = 'MY-LABEL'
         self.query = Query()
-        self.query._builtin = mock.Mock()
         self.query._cache = mock.Mock()
+        self.query._logger = mock.Mock()
 
     def test_should_return_expected_host(self):
         """Simulate query to return session host endpoint URL."""
@@ -64,9 +64,8 @@ class QueryTests(unittest.TestCase):
         self.query._cache.switch.return_value = self.engine
         self.query.list_dynamodb_tables(self.label)
         self.query._cache.switch.assert_called_with(self.label)
-        mock_rs.assert_called_with(self.engine.connection, 'TableNames', 'list_tables', Limit=100)
-        self.query._builtin.log.assert_called_with("List tables response:\n%s" %
-                                                   "[]", 'DEBUG')
+        self.engine.connection.call.assert_called_with('list_tables', Limit=100)
+        self.query._logger.debug.assert_called_with("List tables response:\n[]")
 
     def test_query_should_return_string(self):
         """Simulate query to return string literal."""
@@ -76,8 +75,7 @@ class QueryTests(unittest.TestCase):
         self.query.query_dynamodb(self.label, self.command)
         self.query._cache.switch.assert_called_with(self.label)
         self.engine.execute.assert_called_with(self.command)
-        self.query._builtin.log.assert_called_with("'%s' response:\n%s" %
-                                                   (self.command, response), 'DEBUG')
+        self.query._logger.debug.assert_called_with(f"'{self.command}' response:\n{response}")
 
     def test_query_should_return_result_set(self):
         """Simulate query to return ResultSet object."""
@@ -87,5 +85,4 @@ class QueryTests(unittest.TestCase):
         self.query.query_dynamodb(self.label, self.command)
         self.query._cache.switch.assert_called_with(self.label)
         self.engine.execute.assert_called_with(self.command)
-        self.query._builtin.log.assert_called_with("'%s' response:\n%s" %
-                                                   (self.command, "[]"), 'DEBUG')
+        self.query._logger.debug.assert_called_with(f"'{self.command}' response:\n[]")

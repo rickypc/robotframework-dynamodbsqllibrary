@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -21,11 +21,11 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
+import unittest
 from sys import path
 path.append('src')
-from DynamoDBSQLLibrary import DynamoDBSQLLibrary
-from DynamoDBSQLLibrary.keywords import Assertion, Query, SessionManager
-import unittest
+from DynamoDBSQLLibrary import DynamoDBSQLLibrary  # noqa: E402
+from DynamoDBSQLLibrary.keywords import Assertion, Query, SessionManager  # noqa: E402
 
 
 class DynamoDBSQLLibraryTests(unittest.TestCase):

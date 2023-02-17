@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -21,15 +21,17 @@
 Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
 """
 
+import mock
+import unittest
+from boto3.dynamodb.types import Binary
 from collections import namedtuple, OrderedDict
 from decimal import Decimal
 from dql import Engine
+from dql.exceptions import EngineRuntimeError
 from dynamo3.exception import DynamoDBError
 from sys import path
 path.append('src')
-from DynamoDBSQLLibrary.keywords import Assertion
-import mock
-import unittest
+from DynamoDBSQLLibrary.keywords import Assertion  # noqa: E402
 
 
 class AssertionTests(unittest.TestCase):
@@ -61,7 +63,7 @@ class AssertionTests(unittest.TestCase):
                 'CREATE TABLE dump1 (id STRING HASH KEY,bar NUMBER RANGE KEY)',
                 'CREATE TABLE dump1 (id STRING HASH KEY)')
         self.assertTrue('DynamoDBSQLLibraryError: Table schema dumps are different'
-                        in context.exception)
+                        in str(context.exception))
 
     def test_table_should_be_exist(self):
         """Table exist validation should return table existance."""
@@ -76,15 +78,14 @@ class AssertionTests(unittest.TestCase):
 
     def test_table_exist_raise_assertion_error(self):
         """Table exist validation should raise AssertionError."""
-        self.engine.execute = mock.Mock(side_effect=DynamoDBError(None, None, args=None,
-                                        Code='ResourceNotFoundException', Message=''))
+        self.engine.execute = mock.Mock(side_effect=EngineRuntimeError("Table '%s' not found" % self.table_name))
         self.assertion._cache.switch.return_value = self.engine
         with self.assertRaises(AssertionError) as context:
             self.assertion.dynamodb_table_should_exist(self.label, self.table_name)
         self.assertion._cache.switch.assert_called_with(self.label)
         self.assertTrue("DynamoDBSQLLibraryError: Table '%s' does not exist "
                         "in the requested DynamoDB session" % self.table_name
-                        in context.exception)
+                        in str(context.exception))
 
     def test_table_exist_raise_other_error(self):
         """Table exist validation should raise Exception."""
@@ -94,12 +95,11 @@ class AssertionTests(unittest.TestCase):
         with self.assertRaises(DynamoDBError) as context:
             self.assertion.dynamodb_table_should_exist(self.label, self.table_name)
         self.assertion._cache.switch.assert_called_with(self.label)
-        self.assertTrue("Exception: MY-EXCEPTION\nArgs: None" in context.exception)
+        self.assertTrue("Exception: MY-EXCEPTION\nArgs: None" in str(context.exception))
 
     def test_table_should_not_exist(self):
         """Table not exist validation should return table non-existance."""
-        self.engine.execute = mock.Mock(side_effect=DynamoDBError(None, None, args=None,
-                                        Code='ResourceNotFoundException', Message=''))
+        self.engine.execute = mock.Mock(side_effect=EngineRuntimeError("Table '%s' not found" % self.table_name))
         self.assertion._cache.switch.return_value = self.engine
         self.assertion.dynamodb_table_should_not_exist(self.label, self.table_name)
         self.assertion._cache.switch.assert_called_with(self.label)
@@ -117,7 +117,7 @@ class AssertionTests(unittest.TestCase):
         self.assertion._cache.switch.assert_called_with(self.label)
         self.assertTrue("DynamoDBSQLLibraryError: Table '%s' exists in "
                         "the requested DynamoDB session" % self.table_name
-                        in context.exception)
+                        in str(context.exception))
 
     def test_table_not_exist_raise_other_error(self):
         """Table not exist validation should raise Exception."""
@@ -127,7 +127,7 @@ class AssertionTests(unittest.TestCase):
         with self.assertRaises(DynamoDBError) as context:
             self.assertion.dynamodb_table_should_not_exist(self.label, self.table_name)
         self.assertion._cache.switch.assert_called_with(self.label)
-        self.assertTrue("Exception: MY-EXCEPTION\nArgs: None" in context.exception)
+        self.assertTrue("Exception: MY-EXCEPTION\nArgs: None" in str(context.exception))
 
     def test_json_should_loads(self):
         """De-serialize JSON string to JSON object correctly."""
@@ -152,7 +152,7 @@ class AssertionTests(unittest.TestCase):
         self.assertion._builtin.should_be_equal = mock.Mock(side_effect=AssertionError())
         with self.assertRaises(AssertionError) as context:
             self.assertion.list_and_json_string_should_be_equal(actual, expected, 'key')
-        self.assertEqual(context.exception.message, '')
+        self.assertEqual(str(context.exception), '')
 
     def test_lists_deep_compare_should_be_equal_to(self):
         """First list should be equal to second list."""
@@ -172,6 +172,18 @@ class AssertionTests(unittest.TestCase):
         expected = [{'key': Decimal(5.4)}, {'key': Decimal(5.5)}]
         self.assertEqual(self.assertion.lists_deep_compare(actual, expected, 'key'), 1)
 
+    def test_lists_deep_compare_nested_should_be_equal_to(self):
+        """First list should be equal to second list."""
+        actual = [{'key': {'grand': {'key': [1]}}}, {'key': {'grand': {'key': [0]}}}]
+        expected = [{'key': {'grand': {'key': [0]}}}, {'key': {'grand': {'key': [1]}}}]
+        self.assertEqual(self.assertion.lists_deep_compare(actual, expected, 'key'), 0)
+
+    def test_lists_deep_compare_nested_should_not_be_equal_to(self):
+        """First list should be equal to second list."""
+        actual = [{'key': {'grand': {'key': {'py/set': [Decimal(1)]}}}}, {'key': {'grand': {'key': {'py/set': [Decimal(0)]}}}}]
+        expected = [{'key': {'grand': {'key': [0]}}}, {'key': {'grand': {'key': [1]}}}]
+        self.assertEqual(self.assertion.lists_deep_compare(actual, expected, 'key'), 1)
+
     def test_lists_deep_comparison_should_be_equal(self):
         """Lists deep comparison should compare equally."""
         actual = [{'key': Decimal(5.5)}, {'key': Decimal(5.4)}]
@@ -189,7 +201,13 @@ class AssertionTests(unittest.TestCase):
         self.assertion._builtin.should_be_equal = mock.Mock(side_effect=AssertionError())
         with self.assertRaises(AssertionError) as context:
             self.assertion.lists_deep_compare_should_be_equal(actual, expected, 'key')
-        self.assertEqual(context.exception.message, '')
+        self.assertEqual(str(context.exception), '')
+
+    def test_object_restore_binary(self):
+        """Should restore boto3 Binary object successfully."""
+        actual = {'py/boto3.dynamodb.types.Binary': 'value'}
+        expected = Binary(bytes('value', encoding='utf-8'))
+        self.assertEqual(self.assertion._restore(actual), expected)
 
     def test_object_restore_dict(self):
         """Should restore dict object successfully."""
