@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,11 +22,15 @@ Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like D
 """
 
 from dynamo3.result import ResultSet
+from robot.api import logger
 from robot.api.deco import keyword
 
 
-class Query(object):
+class Query():
     """Query keywords for DynamoDB scan and query operations."""
+
+    def __init__(self):
+        self._logger = logger
 
     @keyword("DynamoDB Host")
     def dynamodb_host(self, label):
@@ -70,10 +74,11 @@ class Query(object):
         """
         # pylint: disable=no-member
         session = self._cache.switch(label)
-        response = list(ResultSet(session.connection, 'TableNames', 'list_tables',
-                                  Limit=int(kwargs.pop('Limit', 100)), **kwargs))
+        response = list(session.connection.call('list_tables',
+                                                Limit=int(kwargs.pop('Limit', 100)),
+                                                **kwargs)['TableNames'])
         # pylint: disable=no-member
-        self._builtin.log("List tables response:\n%s" % response, 'DEBUG')
+        self._logger.debug(f"List tables response:\n{response}")
         return response
 
     @keyword("Query DynamoDB")
@@ -96,5 +101,5 @@ class Query(object):
         if isinstance(response, ResultSet):
             response = list(response)
         # pylint: disable=no-member
-        self._builtin.log("'%s' response:\n%s" % (commands, response), 'DEBUG')
+        self._logger.debug(f"'{commands}' response:\n{response}")
         return response
