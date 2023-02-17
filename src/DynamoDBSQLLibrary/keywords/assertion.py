@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #    Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like DSL.
-#    Copyright (C) 2014 - 2015  Richard Huang <rickypc@users.noreply.github.com>
+#    Copyright (C) 2014 - 2023  Richard Huang <rickypc@users.noreply.github.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -23,15 +23,20 @@ Amazon DynamoDB SQL Library - an Amazon DynamoDB testing library with SQL-like D
 
 from collections import namedtuple, OrderedDict
 from decimal import Decimal
-from dynamo3.exception import DynamoDBError
-from json import loads
+from json import dumps, JSONEncoder, loads
 from operator import itemgetter
 from re import split
+from boto3.dynamodb.types import Binary
+from dql.exceptions import EngineRuntimeError
 from robot.api.deco import keyword
+from robot.libraries.BuiltIn import BuiltIn
 
 
-class Assertion(object):
+class Assertion():
     """Assertion keywords for DynamoDB operations."""
+
+    def __init__(self):
+        self._builtin = BuiltIn()
 
     @staticmethod
     @keyword("DynamoDB Dumps Should Be Equal")
@@ -66,16 +71,16 @@ class Assertion(object):
         | DynamoDB Table Should Exist | LABEL | my-table            | # PASS |
         | DynamoDB Table Should Exist | LABEL | non-existance-table | # FAIL |
         """
-        # pylint: disable=no-member
+        # pylint: disable-next=no-member
         session = self._cache.switch(label)
         try:
-            session.execute("DUMP SCHEMA %s" % table_name)
-        except DynamoDBError as exception:
-            if exception.kwargs['Code'] == 'ResourceNotFoundException':
-                raise AssertionError("DynamoDBSQLLibraryError: Table '%s' does not exist "
-                                     "in the requested DynamoDB session" % table_name)
-            else:
-                raise
+            session.execute(f'DUMP SCHEMA {table_name}')
+        except EngineRuntimeError as exception:
+            if str(exception) == f"Table '{table_name}' not found":
+                # pylint: disable-next=raise-missing-from
+                raise AssertionError(f"DynamoDBSQLLibraryError: Table '{table_name}' "
+                                     "does not exist in the requested DynamoDB session")
+            raise
 
     @keyword("DynamoDB Table Should Not Exist")
     def dynamodb_table_should_not_exist(self, label, table_name):
@@ -92,14 +97,14 @@ class Assertion(object):
         # pylint: disable=no-member
         session = self._cache.switch(label)
         try:
-            session.execute("DUMP SCHEMA %s" % table_name)
-            raise AssertionError("DynamoDBSQLLibraryError: Table '%s' exists in "
-                                 "the requested DynamoDB session" % table_name)
-        except DynamoDBError as exception:
-            if exception.kwargs['Code'] == 'ResourceNotFoundException':
+            session.execute(f'DUMP SCHEMA {table_name}')
+            raise AssertionError(f"DynamoDBSQLLibraryError: Table '{table_name}' exists in "
+                                 "the requested DynamoDB session")
+        except EngineRuntimeError as exception:
+            if str(exception) == f"Table '{table_name}' not found":
                 pass
             else:
-                raise
+                raise  # pragma: no cover
 
     @keyword("Json Loads")
     def json_loads(self, text):
@@ -111,14 +116,16 @@ class Assertion(object):
         - ``text``: JSON string.
 
         Supported object restoration:
-        | `py/dict`                    |
-        | `py/tuple`                   |
-        | `py/set`                     |
-        | `py/collections.namedtuple`  |
-        | `py/collections.OrderedDict` |
+        | `py/boto3.dynamodb.types.Binary` |
+        | `py/dict`                        |
+        | `py/tuple`                       |
+        | `py/set`                         |
+        | `py/collections.namedtuple`      |
+        | `py/collections.OrderedDict`     |
 
         Examples:
         | @{var} = | JSON Loads | [{"key":"value"}] |
+        | @{var} = | JSON Loads | [{"py/boto3.dynamodb.types.Binary":"value"}] |
         | @{var} = | JSON Loads | [{"py/dict":{"key":"value"}}] |
         | @{var} = | JSON Loads | [{"py/tuple":(1,2,3)}] |
         | @{var} = | JSON Loads | [{"py/set":[1,2,3]}] |
@@ -130,7 +137,8 @@ class Assertion(object):
 
     @keyword("List And Json String Should Be Equal")
     def list_and_json_string_should_be_equal(self, actual, expected_text, order_by='id'):
-        """Fails if deep compare of the given list and [http://goo.gl/o0X6Pp|JSON] string are unequal.
+        """Fails if deep compare of the given list and [http://goo.gl/o0X6Pp|JSON] string
+        are unequal.
 
         Arguments:
         - ``actual``: The list to be compared to JSON object from given JSON string.
@@ -162,8 +170,7 @@ class Assertion(object):
         | @{list2} = | Create List | ${dict2} |
         | ${var} = | Lists Deep Compare | ${list1} | ${list2} |
         """
-        list1, list2 = [sorted(l, key=itemgetter(order_by)) for l in (list1, list2)]
-        return Assertion._cmp(list1, list2)
+        return Assertion._cmp(list1, list2, key=itemgetter(order_by))
 
     @keyword("Lists Deep Compare Should Be Equal")
     def lists_deep_compare_should_be_equal(self, list1, list2, order_by='id'):
@@ -188,22 +195,51 @@ class Assertion(object):
     @staticmethod
     def _restore(dct):
         """Returns restored object."""
-        if "py/dict" in dct:
-            return dict(dct["py/dict"])
-        if "py/tuple" in dct:
-            return tuple(dct["py/tuple"])
-        if "py/set" in dct:
-            return set(dct["py/set"])
-        if "py/collections.namedtuple" in dct:
-            data = dct["py/collections.namedtuple"]
-            return namedtuple(data["type"], data["fields"])(*data["values"])
-        # if "py/numpy.ndarray" in dct:
-        #     data = dct["py/numpy.ndarray"]
-        #     return np.array(data["values"], dtype=data["dtype"])
-        if "py/collections.OrderedDict" in dct:
-            return OrderedDict(dct["py/collections.OrderedDict"])
-        return dct
+        response = dct
+        if 'py/boto3.dynamodb.types.Binary' in dct:
+            response = Binary(bytes(dct['py/boto3.dynamodb.types.Binary'], encoding='utf-8'))
+        elif 'py/dict' in dct:
+            response = dict(dct['py/dict'])
+        elif 'py/tuple' in dct:
+            response = tuple(dct['py/tuple'])
+        elif 'py/set' in dct:
+            response = set(dct['py/set'])
+        elif 'py/collections.namedtuple' in dct:
+            data = dct['py/collections.namedtuple']
+            response = namedtuple(data['type'], data['fields'])(*data['values'])
+        # elif 'py/numpy.ndarray' in dct:
+        #     data = dct['py/numpy.ndarray']
+        #     response = np.array(data['values'], dtype=data['dtype'])
+        elif 'py/collections.OrderedDict' in dct:
+            response = OrderedDict(dct['py/collections.OrderedDict'])
+        return response
 
     @staticmethod
-    def _cmp(a, b):
-        return (a > b) - (a < b)
+    def _cmp(val1, val2, **kwargs):
+        try:
+            sorted_val1 = Assertion._sorting(val1, **kwargs)
+            sorted_val2 = Assertion._sorting(val2, **kwargs)
+            return (sorted_val1 > sorted_val2) - (sorted_val1 < sorted_val2)
+        # pylint: disable-next=broad-exception-caught
+        except Exception:
+            dumped_val1 = dumps(val1, cls=DecimalEncoder, sort_keys=True)
+            dumped_val2 = dumps(val2, cls=DecimalEncoder, sort_keys=True)
+            return 0 if dumped_val1 == dumped_val2 else 1
+
+    @staticmethod
+    def _sorting(item, **kwargs):
+        if isinstance(item, dict):
+            return sorted(((key, Assertion._sorting(values))
+                          for key, values in item.items()), **kwargs)
+        if isinstance(item, list):
+            return sorted(Assertion._sorting(x) for x in item)
+        return item
+
+
+class DecimalEncoder(JSONEncoder):
+    """JSON encoder with Decimal value support."""
+
+    def default(self, o):
+        if isinstance(o, Decimal):
+            return int(o) if o % 1 == 0 else float(o)
+        return super().default(o)  # pragma: no cover
