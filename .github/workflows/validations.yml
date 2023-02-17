@@ -23,7 +23,7 @@ on:
       - master
 jobs:
   checks:
-    name: Lint, Unit Test
+    name: Lint, Unit Test, Acceptance Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -31,7 +31,7 @@ jobs:
       - name: Setup Python 3
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: 3.9
       - name: Install dependencies
         run: make install_devel_deps
       - name: Static analyze code
