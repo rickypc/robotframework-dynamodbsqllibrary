@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Install dependencies
-        run: make install_devel_deps
+        run: pip install boto3; make install_devel_deps
       - name: Static analyze code
         run: make lint
       - name: Check code functionality
