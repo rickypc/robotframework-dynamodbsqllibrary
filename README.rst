@@ -1,7 +1,7 @@
 Amazon AWS DynamoDB big data testing library for Robot Framework
 ================================================================
 
-|Build| |Coverage| |Grade| |Docs| |Version| |Status| |Python| |Download| |License|
+|Build| |Coverage| |Docs| |Version| |Status| |Python| |Download| |License|
 
 Introduction
 ------------
@@ -245,7 +245,7 @@ This library is free software, licensed under: `GNU Affero General Public Licens
 Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License`_.
 
 .. _Amazon DynamoDB: https://goo.gl/C4yE9H
-.. _Contribution Agreement: CONTRIBUTING.md 
+.. _Contribution Agreement: CONTRIBUTING.md
 .. _CNTML: http://goo.gl/ukiwSO
 .. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://goo.gl/SNw73V
 .. _dql: https://goo.gl/n43Il4
@@ -266,9 +266,6 @@ Documentation and other similar content are provided under `Creative Commons Att
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
     :target: https://goo.gl/anBeKH
     :alt: Code Coverage
-.. |Grade| image:: https://img.shields.io/codacy/242f6dae492b4d168d6a4f4a9d5f1fc0.svg
-    :target: https://goo.gl/XZ7Tqg
-    :alt: Code Grade
 .. |Docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
     :target: https://goo.gl/xPJK6j
     :alt: Keyword Documentation
