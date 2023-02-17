@@ -99,7 +99,7 @@ The recommended installation method is using pip_:
 
 .. code:: bash
 
-    pip install robotframework-dynamodbsqllibrary
+    python -m pip install robotframework-dynamodbsqllibrary
 
 The main benefit of using ``pip`` is that it automatically installs all
 dependencies needed by the library. Other nice features are easy upgrading
@@ -107,8 +107,8 @@ and support for un-installation:
 
 .. code:: bash
 
-    pip install --upgrade robotframework-dynamodbsqllibrary
-    pip uninstall robotframework-dynamodbsqllibrary
+    python -m pip install --upgrade robotframework-dynamodbsqllibrary
+    python -m pip uninstall robotframework-dynamodbsqllibrary
 
 Notice that using ``--upgrade`` above updates both the library and all
 its dependencies to the latest version. If you want, you can also install
@@ -116,9 +116,9 @@ a specific version or upgrade only the dql_ package used by the library:
 
 .. code:: bash
 
-    pip install robotframework-dynamodbsqllibrary==x.x.x
-    pip install --upgrade dql
-    pip install dql==x.x.x
+    python -m pip install robotframework-dynamodbsqllibrary==x.x.x
+    python -m pip install --upgrade dql
+    python -m pip install dql==x.x.x
 
 Proxy configuration
 '''''''''''''''''''
