@@ -1,7 +1,7 @@
 Amazon AWS DynamoDB big data testing library for Robot Framework
 ================================================================
 
-|Build| |Coverage| |Docs| |Version| |Status| |Python| |Download| |License|
+|Validations| |Coverage| |Docs| |Version| |Status| |Python| |Download| |License|
 
 Introduction
 ------------
@@ -131,9 +131,9 @@ you may want to consider installing CNTML_ to handle communicating with it.
 For more information about ``--proxy`` option and using pip with proxies
 in general see:
 
-- http://pip-installer.org/en/latest/usage.html
-- http://stackoverflow.com/questions/9698557/how-to-use-pip-on-windows-behind-an-authenticating-proxy
-- http://stackoverflow.com/questions/14149422/using-pip-behind-a-proxy
+- https://pip.pypa.io/en/stable/cli/pip/#cmdoption-proxy
+- https://stackoverflow.com/questions/9698557/how-to-use-pip-on-windows-behind-an-authenticating-proxy
+- https://stackoverflow.com/questions/14149422/using-pip-behind-a-proxy
 
 Manual installation
 '''''''''''''''''''
@@ -244,43 +244,42 @@ This library is free software, licensed under: `GNU Affero General Public Licens
 
 Documentation and other similar content are provided under `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License`_.
 
-.. _Amazon DynamoDB: https://goo.gl/C4yE9H
+.. _Amazon DynamoDB: https://bit.ly/3SgjyQA
 .. _Contribution Agreement: CONTRIBUTING.md
-.. _CNTML: http://goo.gl/ukiwSO
-.. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: http://goo.gl/SNw73V
-.. _dql: https://goo.gl/n43Il4
-.. _DQL Queries Documentation: https://goo.gl/RRKSeK
-.. _DSL: https://goo.gl/P1fhzc
-.. _DynamoDB SQL Library CLA: https://goo.gl/forms/ttduh4g7Nt
-.. _GNU Affero General Public License (AGPL-3.0): http://goo.gl/LOMJeU
-.. _Keyword Documentation: https://goo.gl/xPJK6j
-.. _pip: http://goo.gl/jlJCPE
-.. _Robot Framework: http://goo.gl/lES6WM
-.. _Robot Framework Documentation: http://goo.gl/zy53tf
-.. _Robot Framework installed: https://goo.gl/PFbWqM
-.. _Robot Framework User Guide: http://goo.gl/Q7dfPB
-.. _SQL-like: https://goo.gl/RRKSeK
-.. |Build| image:: https://img.shields.io/travis/rickypc/robotframework-dynamodbsqllibrary.svg
-    :target: https://goo.gl/vBT1y2
-    :alt: Build Status
+.. _CNTML: https://bit.ly/3IxTVXZ
+.. _Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License: https://bit.ly/2SMCRlS
+.. _dql: https://bit.ly/3IaeVCW
+.. _DQL Queries Documentation: https://bit.ly/3lFPzFj
+.. _DSL: https://bit.ly/3lAWXli
+.. _GNU Affero General Public License (AGPL-3.0): https://bit.ly/2yi7gyO
+.. _Keyword Documentation: https://bit.ly/3SayD5V
+.. _pip: https://bit.ly/3xzSLVU
+.. _Robot Framework: https://bit.ly/3k0gKug
+.. _Robot Framework Documentation: https://bit.ly/3xziFc4
+.. _Robot Framework installed: https://bit.ly/3YEmfxr
+.. _Robot Framework User Guide: https://bit.ly/410hgsR
+.. _SQL-like: https://bit.ly/3lFPzFj
+.. |Validations| image:: https://github.com/rickypc/robotframework-dynamodbsqllibrary/actions/workflows/validations.yml/badge.svg
+    :target: https://bit.ly/3IvXeyW
+    :alt: Validation Status
 .. |Coverage| image:: https://img.shields.io/codecov/c/github/rickypc/robotframework-dynamodbsqllibrary.svg
-    :target: https://goo.gl/anBeKH
+    :target: https://bit.ly/3XLr1rH
     :alt: Code Coverage
 .. |Docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-    :target: https://goo.gl/xPJK6j
+    :target: https://bit.ly/3SayD5V
     :alt: Keyword Documentation
 .. |Version| image:: https://img.shields.io/pypi/v/robotframework-dynamodbsqllibrary.svg
-    :target: https://goo.gl/kOsXOU
+    :target: https://bit.ly/3EjaggS
     :alt: Package Version
 .. |Status| image:: https://img.shields.io/pypi/status/robotframework-dynamodbsqllibrary.svg
-    :target: https://goo.gl/kOsXOU
+    :target: https://bit.ly/3EjaggS
     :alt: Development Status
 .. |Python| image:: https://img.shields.io/pypi/pyversions/robotframework-dynamodbsqllibrary.svg
-    :target: https://goo.gl/sXzgao
+    :target: https://bit.ly/3Iz6baY
     :alt: Python Version
 .. |Download| image:: https://img.shields.io/pypi/dm/robotframework-dynamodbsqllibrary.svg
-    :target: https://goo.gl/kOsXOU
+    :target: https://bit.ly/3EjaggS
     :alt: Monthly Download
 .. |License| image:: https://img.shields.io/pypi/l/robotframework-dynamodbsqllibrary.svg
-    :target: http://goo.gl/LOMJeU
+    :target: https://bit.ly/2yi7gyO
     :alt: License
