@@ -114,11 +114,11 @@ github_doc:clean
 	git checkout master
 
 testpypi:clean_dist doc
-	python setup.py register -r test
-	python setup.py sdist upload -r test --sign
-	@echo https://testpypi.python.org/pypi/robotframework-$(call lc,$(LIBRARY_NAME))/
+	python -m build
+	twine check dist/*
+	twine upload dist/* -r test --sign
 
 pypi:clean_dist doc
-	python setup.py register -r pypi
-	python setup.py sdist upload -r pypi --sign
-	@echo https://pypi.python.org/pypi/robotframework-$(call lc,$(LIBRARY_NAME))/
+	python -m build
+	twine check dist/*
+	twine upload dist/* -r pypi --sign
